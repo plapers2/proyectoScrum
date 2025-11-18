@@ -17,31 +17,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         };
         //* Verificaciones
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if ($usuario['fkEstadoUsuario'] == 1) {
-                if (password_verify($pass, $usuario['passUsuario'])) {
-                    //* Se guardan credenciales en variable global $_SESSION
-                    $_SESSION['idUsuario'] = $usuario['id_usuario'];
-                    $_SESSION['emailUsuario'] = $usuario['email_usuario'];
-                    $_SESSION['nombreUsuario'] = $usuario['nombre_usuario'];
-                    $_SESSION['idTipoUsuario'] = $usuario['id_rol'];
-                    $_SESSION['tipoUsuario'] = $usuario['nombre_rol'];
-                    $_SESSION['apellidoUsuario'] = $usuario['apellido_usuario'];
-                    //* Exito
-                    if ($_SESSION['tipoUsuario'] == 'Administrador') {
-                        header("Location: ../dist/dashboard.php");
-                        exit();
-                    } else {
-                        header("Location: ../dist/libros.php");
-                        exit();
-                    }
+            if (password_verify($pass, $usuario['passUsuario'])) {
+                //* Se guardan credenciales en variable global $_SESSION
+                $_SESSION['idUsuario'] = $usuario['id_usuario'];
+                $_SESSION['emailUsuario'] = $usuario['email_usuario'];
+                $_SESSION['nombreUsuario'] = $usuario['nombre_usuario'];
+                $_SESSION['idTipoUsuario'] = $usuario['id_rol'];
+                $_SESSION['tipoUsuario'] = $usuario['nombre_rol'];
+                $_SESSION['apellidoUsuario'] = $usuario['apellido_usuario'];
+                //* Exito
+                if ($_SESSION['tipoUsuario'] == 'Administrador') {
+                    header("Location: ../dist/dashboard.php");
+                    exit();
                 } else {
-                    $mysql->desconectar();
-                    header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
+                    header("Location: ../dist/libros.php");
                     exit();
                 }
             } else {
                 $mysql->desconectar();
-                header("Location: ../dist/login.php?error=true&message=Usuario inactivo!&title=Error!");
+                header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
                 exit();
             }
         }
