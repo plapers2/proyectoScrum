@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombreUsuario = filter_var(trim($_POST['usuarioLogin']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pass = $_POST['passLogin'];
         try {
-            $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario JOIN tipoUsuario on tipoUsuario.idTipoUsuario = usuario.fkTipoUsuario where usuario.nombreUsuario = '$nombreUsuario'; ");
+            $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario JOIN roles on roles.id_rol = usuario.fk_rol_usuario where usuario.nombre_usuario = '$nombreUsuario'; ");
         } catch (\Throwable $th) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario', 'error' => $th]);
@@ -20,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($usuario['fkEstadoUsuario'] == 1) {
                 if (password_verify($pass, $usuario['passUsuario'])) {
                     //* Se guardan credenciales en variable global $_SESSION
-                    $_SESSION['idUsuario'] = $usuario['idUsuario'];
-                    $_SESSION['emailUsuario'] = $usuario['emailUsuario'];
-                    $_SESSION['nombreUsuario'] = $usuario['nombreUsuario'];
-                    $_SESSION['idTipoUsuario'] = $usuario['idTipoUsuario'];
-                    $_SESSION['tipoUsuario'] = $usuario['tipoUsuario'];
-                    $_SESSION['apellidoUsuario'] = $usuario['apellidoUsuario'];
+                    $_SESSION['idUsuario'] = $usuario['id_usuario'];
+                    $_SESSION['emailUsuario'] = $usuario['email_usuario'];
+                    $_SESSION['nombreUsuario'] = $usuario['nombre_usuario'];
+                    $_SESSION['idTipoUsuario'] = $usuario['id_rol'];
+                    $_SESSION['tipoUsuario'] = $usuario['nombre_rol'];
+                    $_SESSION['apellidoUsuario'] = $usuario['apellido_usuario'];
                     //* Exito
                     if ($_SESSION['tipoUsuario'] == 'Administrador') {
                         header("Location: ../dist/dashboard.php");
