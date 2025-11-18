@@ -22,7 +22,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
+awa
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
