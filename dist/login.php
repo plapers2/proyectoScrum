@@ -49,7 +49,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="registro.php">¿Necesitas una cuenta? Registrate</a></div>
+                                    <div class="small"><button id="btnRegistro" class="btn btn-primary">Registrarse</button></div>
                                 </div>
                             </div>
                         </div>
@@ -76,6 +76,184 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="js/sweetAlerts.js"></script>
+    <script>
+        document.getElementById('btnRegistro').addEventListener('click', () => {
+            Swal.fire({
+                title: '<h2 style="font-weight:600; color:#4a4a4a;">Registro de Usuario</h2>',
+                width: '500px',
+                background: '#f8f9fc',
+                color: '#333',
+                showCancelButton: true,
+                confirmButtonText: 'Registrar',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#6a5acd',
+                cancelButtonColor: '#6c757d',
+                html: `
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                <input id="nombre" class="swal2-input" placeholder="Nombre">
+                <input id="apellido" class="swal2-input" placeholder="Apellido">
+                <input id="email" class="swal2-input" placeholder="Email" type="email">
+                <input id="pass" class="swal2-input" placeholder="Contraseña" type="password">
+
+                <select id="rol" class="swal2-input">
+                    <option value="">Seleccione un rol</option>
+                    <option value="aprendiz">Aprendiz</option>
+                    <option value="instructor">Instructor</option>
+                    <option value="administrador">Administrador</option>
+                </select>
+
+                <select id="curso" class="swal2-input" style="display:none;">
+                    <option value="">Seleccione un curso</option>
+                    <?php
+                    require_once '../models/MySQL.php';
+                    $mysql = new MySQL();
+                    $mysql->conectar();
+                    $resultado = $mysql->efectuarConsulta("SELECT id_curso, nombre_curso FROM cursos");
+                    while ($curso = mysqli_fetch_assoc($resultado)) {
+                        echo "<option value='{$curso['id_curso']}'>{$curso['nombre_curso']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+        `,
+                preConfirm: () => {
+                    const nombre = document.getElementById('nombre').value;
+                    const apellido = document.getElementById('apellido').value;
+                    const email = document.getElementById('email').value;
+                    const pass = document.getElementById('pass').value;
+                    const rol = document.getElementById('rol').value;
+                    const curso = document.getElementById('curso').value;
+
+                    if (!nombre || !apellido || !email || !pass || !rol) {
+                        Swal.showValidationMessage('Por favor complete todos los campos requeridos');
+                        return false;
+                    }
+
+                    if (rol === 'aprendiz' && !curso) {
+                        Swal.showValidationMessage('Seleccione un curso para el aprendiz');
+                        return false;
+                    }
+
+                    return {
+                        nombre,
+                        apellido,
+                        email,
+                        pass,
+                        rol,
+                        curso
+                    };
+                }
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                const data = result.value;
+
+                fetch('../controller/controllerSigUp.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `usuarioNombre=${encodeURIComponent(data.nombre)}` +
+                            `&usuarioApellido=${encodeURIComponent(data.apellido)}` +
+                            `&usuarioEmail=${encodeURIComponent(data.email)}` +
+                            `&usuarioPass=${encodeURIComponent(data.pass)}` +
+                            `&usuarioRol=${encodeURIComponent(data.rol)}` +
+                            `&cursoId=${encodeURIComponent(data.curso)}`
+                    })
+                    .then(res => res.text().then(text => ({
+                        status: res.status,
+                        text
+                    })))
+                    .then(({
+                        status,
+                        text
+                    }) => {
+
+                        switch (text) {
+
+                            case "Registrado":
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Registro Exitoso',
+                                    text: 'El usuario ha sido registrado correctamente.',
+                                    confirmButtonColor: '#6a5acd'
+                                }).then(() => {
+                                    window.location.href = '../dist/login.php';
+                                });
+                                break;
+
+                            case "EmailRepetido":
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Correo ya registrado',
+                                    text: 'Este correo ya está en uso.',
+                                });
+                                break;
+
+                            case "FaltaCurso":
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Falta seleccionar curso',
+                                    text: 'El rol Aprendiz requiere un curso.',
+                                });
+                                break;
+
+                            case "CamposVacios":
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Campos incompletos',
+                                    text: 'Faltan datos por llenar.',
+                                });
+                                break;
+
+                            case "ErrorConsulta":
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error en la consulta',
+                                    text: 'Hubo un problema al verificar el correo.',
+                                });
+                                break;
+
+                            case "ErrorInsertando":
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error al registrar',
+                                    text: 'No se pudo insertar el registro.',
+                                });
+                                break;
+
+                            default:
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error desconocido',
+                                    text: 'El servidor respondió: ' + text,
+                                });
+                                break;
+                        }
+
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error de conexión',
+                            text: 'No se pudo contactar con el servidor.',
+                        });
+                    });
+            });
+
+            // Activa el select de curso
+            setTimeout(() => {
+                const rolSelect = document.getElementById('rol');
+                const cursoSelect = document.getElementById('curso');
+
+                rolSelect.addEventListener('change', () => {
+                    cursoSelect.style.display = (rolSelect.value === 'aprendiz') ? 'block' : 'none';
+                });
+            }, 80);
+        });
+    </script>
+
+
 </body>
 
 </html>

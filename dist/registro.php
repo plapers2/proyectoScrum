@@ -25,26 +25,74 @@
                                 </div>
                                 <div class="card-body">
                                     <form action="../controller/controllerSigUp.php" method="post">
+
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuarioNombre" type="text" placeholder="Nombre" name="usuarioNombre" />
+                                            <input class="form-control" id="usuarioNombre" type="text" placeholder="Nombre" name="usuarioNombre" required>
                                             <label for="usuarioNombre">Nombre</label>
                                         </div>
+
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuarioApellido" type="text" placeholder="Usuario" name="usuarioApellido" />
+                                            <input class="form-control" id="usuarioApellido" type="text" placeholder="Apellido" name="usuarioApellido" required>
                                             <label for="usuarioApellido">Apellido</label>
                                         </div>
+
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuarioEmail" type="email" placeholder="Email" name="usuarioEmail" />
+                                            <input class="form-control" id="usuarioEmail" type="email" placeholder="Email" name="usuarioEmail" required>
                                             <label for="usuarioEmail">Email</label>
                                         </div>
+
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuarioPass" type="password" placeholder="Contraseña" name="usuarioPass" />
+                                            <input class="form-control" id="usuarioPass" type="password" placeholder="Contraseña" name="usuarioPass" required>
                                             <label for="usuarioPass">Contraseña</label>
                                         </div>
+
+                                        <div class="form-floating mb-3">
+                                            <select class="form-control" id="usuarioRol" name="usuarioRol" required>
+                                                <option value="">Seleccione un rol</option>
+                                                <option value="aprendiz">Aprendiz</option>
+                                                <option value="instructor">Instructor</option>
+                                                <option value="administrador">Administrador</option>
+                                            </select>
+                                            <label for="usuarioRol">Rol</label>
+                                        </div>
+
+                                        <!-- Solo se muestra si es aprendiz -->
+                                        <div class="form-floating mb-3" id="cursoDiv" style="display:none;">
+                                            <select class="form-control" name="cursoId" id="cursoId">
+                                                <option value="">Seleccione un curso</option>
+                                                <?php
+                                                require_once '../models/MySQL.php';
+                                                $mysql = new MySQL();
+                                                $mysql->conectar();
+                                                $resultado = $mysql->efectuarConsulta("SELECT id_curso, nombre_curso FROM cursos");
+                                                while ($curso = mysqli_fetch_assoc($resultado)) {
+                                                    echo "<option value='{$curso['id_curso']}'>{$curso['nombre_curso']}</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                            <label for="cursoId">Curso</label>
+                                        </div>
+
                                         <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
                                             <button type="submit" class="btn btn-primary form-control">Enviar</button>
                                         </div>
+
                                     </form>
+
+                                    <script>
+                                        const rolSelect = document.getElementById('usuarioRol');
+                                        const cursoDiv = document.getElementById('cursoDiv');
+
+                                        rolSelect.addEventListener('change', function() {
+                                            if (this.value === 'aprendiz') {
+                                                cursoDiv.style.display = 'block';
+                                                document.getElementById('cursoId').required = true;
+                                            } else {
+                                                cursoDiv.style.display = 'none';
+                                                document.getElementById('cursoId').required = false;
+                                            }
+                                        });
+                                    </script>
                                 </div>
                                 <div class="card-footer text-center py-3">
                                     <div class="small"><a href="login.php">¿Ya tienes cuenta? Inicia sesion aqui</a></div>
@@ -72,6 +120,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

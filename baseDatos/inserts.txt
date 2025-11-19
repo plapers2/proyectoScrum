@@ -1,8 +1,4 @@
-insert into cursos values ('','ADSO');
-
-
-HACER DE SEGUNDO!
-
 insert into instructores values ('','Instructor', 'Apellido Instructor', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW','Instructor@Instructor.com');
-insert into aprendices values ('','Aprendiz','Apellido Aprendiz', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'Aprendiz@aprendiz.com',1);
+insert into aprendices values ('','Aprendiz','Apellido Aprendiz', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'Aprendiz@aprendiz.com');
 insert into administradores values ('','Admin', 'Apellido Admin', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'admin@admin.com');
+insert into cursos values ('','ADSO');
