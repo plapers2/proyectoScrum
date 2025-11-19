@@ -1,5 +1,9 @@
 <?php
 session_start();
+require_once '../models/MySQL.php';
+$mysql = new MySQL();
+$mysql->conectar();
+
 if (!$_SESSION) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
@@ -8,20 +12,16 @@ if ($_SESSION['tipoUsuario'] != 'Administrador') {
     header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
     exit;
 }
-require_once '../models/MySQL.php';
-$mysql = new MySQL();
-$mysql->conectar();
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM usuario 
-JOIN tipoUsuario ON tipoUsuario.idTipoUsuario = usuario.fkTipoUsuario
-JOIN estado ON estado.idEstado = usuario.fkEstadoUsuario");
-$usuario = [];
-while ($fila = mysqli_fetch_assoc($resultado)) {
-    $usuario[] = $fila;
+$usuarios_result = $mysql->efectuarConsulta("SELECT * FROM usuarios");
+$usuarios = [];
+while ($valor = mysqli_fetch_assoc($usuarios_result)) {
+    $usuarios[] = $valor;
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -152,30 +152,26 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['tipoUsuario'] != 'Cliente') {  ?>
+                                    <?php foreach ($usuarios as $valor):
+                                        if ($valor['tipoUsuario'] != 'Cliente'):  ?>
                                             <tr>
 
-                                                <td><?php echo $filaUsuario['nombreUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['apellidoUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['emailUsuario']; ?></td>
-                                                <td><?php echo '<span class="badge p-2 ms-5 mt-1 fs-6  bg-' . (($filaUsuario['tipoEstado'] === 'Activo') ? 'success"><i class="bi bi-check-circle"></i> ' : 'danger"><i class="bi bi-x-circle"></i> ')  . $filaUsuario['tipoEstado'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-between w-100"><?php if ($filaUsuario['tipoEstado'] == "Activo") {
-                                                                                                        echo '<button onclick="sweetUsuarioDesactivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-danger"><i class="bi bi-person-fill-x"></i> Desactivar</button>';
-                                                                                                    } else {
-                                                                                                        echo '<button onclick="sweetUsuarioActivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-success"><i class="bi bi-person-fill-check"></i> Activar</a>';
-                                                                                                    }; ?>
-                                                    <?php echo '<button onclick="sweetUsuarioEditar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-warning ms-2" id="usuarioEditar"><i class="bi bi-person-video2"></i> Editar</button>'; ?>
-                                                    <!-- Se tiene que quemar el evento por que la tabla no deja asignar con addEventListener -->
-                                                </td>
+                                                <td><?= $valor['nombre_usuario']; ?></td>
+                                                <td><?= $valor['apellido_usuario']; ?></td>
+                                                <td><?= $valor['correo_usuario']; ?></td>
+                                                <?php if ($_SESSION["nombre_rol"] === "Administrador"): ?>
+                                                    <td class="d-flex justify-content-between w-100">
+                                                        <button class="btn btn-warning"></button>
+                                                    </td>
+                                                <?php endif; ?>
                                             </tr>
-                                    <?php }
-                                    } ?>
+                                    <?php endif;
+                                    endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="card mb-4">
+                    <div class="card mb-4">?
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
                             Clientes
