@@ -77,7 +77,7 @@ document
             }
 
             Swal.fire({
-              title: "Registrando usuario...",
+              title: "Registrando instructor...",
               text: "Por favor espere un momento.",
               allowOutsideClick: false,
               didOpen: () => Swal.showLoading(),
@@ -97,7 +97,7 @@ document
               if (res.trim() === "ok") {
                 Swal.fire(
                   "Éxito",
-                  "Usuario agregado correctamente",
+                  "Instructor agregado correctamente",
                   "success"
                 ).then(() => location.reload());
               } else if (

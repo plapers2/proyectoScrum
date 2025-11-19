@@ -1,9 +1,16 @@
 <?php
 session_start();
-/* if (!$_SESSION) {
+require_once '../models/MySQL.php';
+$mysql = new MySQL();
+$mysql->conectar();
+if (
+    !isset($_SESSION["idUsuario"])
+    || empty($_SESSION["idUsuario"])
+) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+    $mysql->desconectar();
     exit;
-} */
+}
 /* switch ($_SESSION['tipoUsuario']) {
     case 'Administrador':
         header("Location: administradores.php?error=true&message=Acceso denegado, solo se aceptan instructores!&title=Acceso denegado!");
@@ -14,18 +21,19 @@ session_start();
     default:
         break;
 } */
-require_once '../models/MySQL.php';
-$mysql = new MySQL();
-$mysql->conectar();
+$resultado;
+if ($_SESSION["tipoUsuario"] == "Administrador") {
+    $resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE estado_instructor = 'Activo'");
+} else if ($_SESSION["tipoUsuario"] == "Instructor") {
+    $id = $_SESSION["idUsuario"];
+    $resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE estado_instructor = 'Activo'
+                                            AND id_instructor = $id");
+}
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE estado_instructor = 'Activo'");
 $instructores = [];
 while ($valor = mysqli_fetch_assoc($resultado)) {
     $instructores[] = $valor;
 }
-
-// Elimina esta línea o cámbiala si necesitas mostrar algo específico:
-// echo $instructores["id_instructor"]; 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +44,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - Biblioteca ADSO</title>
+    <title>Instructores - Biblioteca ADSO</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -48,9 +56,6 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
-        <a class="navbar-brand ps-3" href="<?php echo ($_SESSION['tipoUsuario'] != "Administrador") ? "libros.php" :  "dashboard.php" ?>">
-            <?php echo $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
-        </a>
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -66,11 +71,10 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" onclick="sweetConfiguracionPerfil('<?php echo $_SESSION['idUsuario'] ?>','<?php echo $_SESSION['tipoUsuario'] ?>')"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item text-danger" id="btn_cerrar_sesion"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
                 </ul>
             </li>
         </ul>
@@ -80,36 +84,56 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Libros</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Gestión de Libros
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="libros.php">Búsqueda de Libros</a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReservas"
-                                    aria-expanded="true" aria-controls="collapseReservas">
-                                    Reservas
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
+                        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
+                        <!-- Editar Perfil -->
+                        <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
+                            <a data-id="<?= $_SESSION["idUsuario"]; ?>"
+                                data-nombre="<?= $_SESSION["nombreUsuario"]; ?>"
+                                data-apellido="<?= $_SESSION["apellidoUsuario"]; ?>"
+                                data-correo="<?= $_SESSION["emailUsuario"]; ?>"
+                                class="btn nav-link collapsed" onclick="editarPerfil(this)">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
+                                Editar Perfil
+                            </a>
+                        <?php endif; ?>
 
-                                <div class="collapse" id="collapseReservas" data-bs-parent="#collapseLibros">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="reservasPendientes.php">Reservas Pendientes</a>
-                                        <a class="nav-link" href="reservasHistorial.php">Historial de Reservas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="prestamos.php">Préstamos</a>
-                            </nav>
-                        </div>
+                        <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                            <a class="nav-link collapsed" href="administradores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                Administradores
+                            </a>
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
+                            </a>
+                            <a class="nav-link collapsed" href="aprendices.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
+                                Aprendices
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Administrador"
+                            || $_SESSION["tipoUsuario"] == "Instructor"
+                        ): ?>
+                            <a class="nav-link collapsed" href="instructores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                Instructores
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Instructor"
+                            || $_SESSION["tipoUsuario"] == "Aprendiz"
+                        ): ?>
+                            <a class="nav-link collapsed" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Trabajos
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logueado como:</div>
-                    <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['tipoUsuario'] . "</p>"; ?>
                 </div>
             </nav>
         </div>
@@ -117,24 +141,39 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Panel de Instructores</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de Instructores</li>
-                    </ol>
-                    <button class="btn btn-success mb-4" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Instructor</button>
+                    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                        <h1 class="mt-4">Panel de Instructores</h1>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item active">Panel de Instructores</li>
+                        </ol>
+                        <div class="text-end">
+                            <button class="btn btn-success mb-2" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Instructor</button>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
+                        <h1 class="mt-4">Panel de Instructor</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Panel de Instructor</li>
+                        </ol>
+                    <?php endif; ?>
+                    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                    <?php endif; ?>
                     <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Instructores
+                        <div class="card-header d-flex">
+                            <i class="fas fa-table me-2"></i>
+                            <p>Instructor</p>
+                            <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                                <span>es</span>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
-                            <table id="tablaEmpleados">
+                            <table id="tablaInstructores">
                                 <thead>
                                     <tr>
                                         <th>ID instructor</th>
-                                        <th>Nombre</th>
-                                        <th>Apellido</th>
-                                        <th>Email</th>
+                                        <th>Nombres</th>
+                                        <th>Apellidos</th>
+                                        <th>Correo</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -148,15 +187,21 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                                             <td><?php echo $valor['correo_instructor']; ?></td>
                                             <td><?php echo $valor["estado_instructor"]; ?></td>
                                             <td>
-                                                <button data-id="<?= $valor["id_instructor"]; ?>"
-                                                    data-nombre="<?= $valor["nombre_instructor"]; ?>"
-                                                    data-apellido="<?= $valor["apellido_instructor"]; ?>"
-                                                    data-correo="<?= $valor["correo_instructor"]; ?>"
-                                                    class="btn btn-sm btn-primary"
-                                                    onclick="editarInstructor(this)">Editar</button>
-                                                <button data-id="<?= $valor["id_instructor"]; ?>"
-                                                    data-nombre="<?= $valor["nombre_instructor"]; ?>"
-                                                    class="btn btn-sm btn-danger" onclick="eliminarInstructor(this)">Eliminar</button>
+                                                <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                                                    <button data-id="<?= $valor["id_instructor"]; ?>"
+                                                        data-nombre="<?= $valor["nombre_instructor"]; ?>"
+                                                        data-apellido="<?= $valor["apellido_instructor"]; ?>"
+                                                        data-correo="<?= $valor["correo_instructor"]; ?>"
+                                                        class="btn btn-sm btn-warning"
+                                                        onclick="editarInstructor(this)">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    <button data-id="<?= $valor["id_instructor"]; ?>"
+                                                        data-nombre="<?= $valor["nombre_instructor"]; ?>"
+                                                        class="btn btn-sm btn-danger" onclick="eliminarInstructor(this)">
+                                                        <i class="bi bi-person-x-fill"></i>
+                                                    </button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -168,13 +213,8 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
             </main>
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; ADSO 3064749 / 2025</div>
-                        <div>
-                            <button class="btn btn-link" id="politicaPrivacidad">Política &amp; Privacidad</button>
-                            &middot;
-                            <button class="btn btn-link" id="terminosCondiciones">Términos &amp; Condiciones</button>
-                        </div>
+                    <div class="d-flex justify-content-center small">
+                        <div class="text-muted">Realizado por <span style="color: blueviolet;">CodeÁngels</span></div>
                     </div>
                 </div>
             </footer>
@@ -182,10 +222,13 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     </div>
     <?php $mysql->desconectar(); ?>
     <!--JS instructores-->
-    <script src="./js/instructores/registrarInstructor.js"></script>
-    <script src="./js/instructores/editarInstructor.js"></script>
-    <script src="./js/instructores/eliminarInstructor.js"></script>
+    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+        <script src="js/instructores/registrarInstructor.js"></script>
+        <script src="js/instructores/editarInstructor.js"></script>
+        <script src="js/instructores/eliminarInstructor.js"></script>
+    <?php endif; ?>
 
+    <!--CDNS-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
