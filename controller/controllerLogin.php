@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombreUsuario = filter_var(trim($_POST['usuarioLogin']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $pass = $_POST['passLogin'];
         try {
-            $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario JOIN roles on roles.id_rol = usuario.fk_rol_usuario where usuario.nombre_usuario = '$nombreUsuario'; ");
+            $resultado = $mysql->efectuarConsulta("SELECT * FROM administradores JOIN roles on roles.id_rol = usuario.fk_rol_usuario where usuario.nombre_usuario = '$nombreUsuario'; ");
         } catch (\Throwable $th) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario', 'error' => $th]);
@@ -29,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($_SESSION['tipoUsuario'] == 'Administrador') {
                     header("Location: ../dist/dashboard.php");
                     exit();
-                } else {
-                    header("Location: ../dist/libros.php");
-                    exit();
-                }
+                // } else {
+                //     header("Location: ../dist/libros.php");
+                //     exit();
+                // }
             } else {
                 $mysql->desconectar();
                 header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
