@@ -261,8 +261,6 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
             }, 80);
         });
     </script>
-
-
 </body>
 
 </html>
