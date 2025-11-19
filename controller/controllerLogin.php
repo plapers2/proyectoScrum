@@ -40,21 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['idUsuario'] = $usuario['id' . $tipo];
                 $_SESSION['emailUsuario'] = $usuario['correo' . $tipo];
                 $_SESSION['nombreUsuario'] = $usuario['nombre' . $tipo];
-                $_SESSION['tipoUsuario'] = $usuario[$tipo];
                 $_SESSION['apellidoUsuario'] = $usuario['apellido' . $tipo];
                 switch ($tipo) {
-                    case 'administrador':
+                    case '_administrador':
                         $tipo = 'Administrador';
                         break;
-                    case 'instructor':
+                    case '_instructor':
                         $tipo = 'Instructor';
                         break;
-                    case 'aprendiz':
+                    case '_aprendiz':
                         $tipo = 'Aprendiz';
                         break;
                     default:
                         break;
                 }
+                $_SESSION['tipoUsuario'] = $tipo;
+
                 //* Exito
                 if ($_SESSION['tipoUsuario'] == 'Administrador') {
                     header("Location: ../dist/dashboard.php");

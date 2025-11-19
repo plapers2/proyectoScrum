@@ -21,6 +21,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -57,7 +58,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['idUsuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                    <li><button class="dropdown-item text-success" id="configuracionPerfil" onclick="sweetConfiguracionPerfil('<?php echo $_SESSION['idUsuario'] ?>','<?php echo $_SESSION['tipoUsuario'] ?>')"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
