@@ -175,13 +175,13 @@ async function verificarISBN(isbn) {
 
 // #region //* Traer Datos Usuario (por id)
 //TODO Inicio Funcion Traer Datos Usuario (por id)
-async function traerDatosUsuarioPorID(id,tipoUsuario) {
+async function traerDatosUsuarioPorID(id, tipoUsuario) {
     try {
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../controller/controllerDatosUsuarioPorID.php`, {
+        const json = await fetch(`../controller/datosGenerales/controllerDatosUsuarioPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -788,10 +788,10 @@ async function contenidoUsuarioInsertar() {
 
 // #region //* Contenido Usuario Editar
 //TODO Inicio Contenido Usuario Editar
-async function contenidoUsuarioEditar(id,tipoUsuario) {
+async function contenidoUsuarioEditar(id, tipoUsuario) {
     try {
         //? Se traen datos de usuario por ID
-        const datosUsuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+        const datosUsuario = await traerDatosUsuarioPorID(id, tipoUsuario);
         //? Se traen todos los tipos de usuario disponibles
         const jsonTipoUsuario = await fetch(`../controller/controllerDatosTipoUsuario.php`);
         const datosTipoUsuario = await jsonTipoUsuario.json();
@@ -854,10 +854,10 @@ async function contenidoUsuarioEditar(id,tipoUsuario) {
 
 // #region //* Contenido Usuario Activar
 //TODO Inicio Contenido Usuario Activar
-async function contenidoUsuarioActivar(id,tipoUsuario) {
+async function contenidoUsuarioActivar(id, tipoUsuario) {
     try {
         //? Se traen datos de usuario por ID
-        const usuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+        const usuario = await traerDatosUsuarioPorID(id, tipoUsuario);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
@@ -879,10 +879,10 @@ async function contenidoUsuarioActivar(id,tipoUsuario) {
 
 // #region //* Contenido Usuario Desctivar
 //TODO Inicio Contenido Usuario Desactivar
-async function contenidoUsuarioDesctivar(id,tipoUsuario) {
+async function contenidoUsuarioDesctivar(id, tipoUsuario) {
     try {
         //? Se traen datos de usuario por ID
-        const usuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+        const usuario = await traerDatosUsuarioPorID(id, tipoUsuario);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
@@ -904,10 +904,10 @@ async function contenidoUsuarioDesctivar(id,tipoUsuario) {
 
 // #region //* Contenido Configuracion Perfil
 //TODO Inicio Contenido Configuracion Perfil
-async function contenidoConfiguracionPerfil(id,tipoUsuario) {
+async function contenidoConfiguracionPerfil(id, tipoUsuario) {
     try {
         //? Se traen datos de usuario por ID
-        const usuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+        const usuario = await traerDatosUsuarioPorID(id, tipoUsuario);
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
@@ -1064,8 +1064,8 @@ async function sweetUsuarioInsertar() {
                 const emailValue = email;
                 const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!regexCorreo.test(emailValue)) {
-                Swal.showValidationMessage("Formato de correo no válido");
-                return false;
+                    Swal.showValidationMessage('Formato de correo no válido');
+                    return false;
                 }
                 const pass = document.querySelector('#passUsuario').value.trim();
                 const tipoUsuario = document.querySelector('#tipoUsuario').value.trim();
@@ -1135,7 +1135,7 @@ async function sweetUsuarioInsertar() {
 
 // #region //* Sweet Usuario Editar
 //TODO Inicio SweetAlert Usuario Editar
-async function sweetUsuarioEditar(id,tipoUsuario) {
+async function sweetUsuarioEditar(id, tipoUsuario) {
     try {
         Swal.fire({
             title: 'Editar Usuario', //? Titulo Modal
@@ -1149,7 +1149,7 @@ async function sweetUsuarioEditar(id,tipoUsuario) {
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
                 //? Se traen datos de usuario por ID
-                const datosUsuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+                const datosUsuario = await traerDatosUsuarioPorID(id, tipoUsuario);
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuario').value.trim();
                 const apellido = document.querySelector('#apellidoUsuario').value.trim();
@@ -1360,7 +1360,7 @@ async function sweetUsuarioDesactivar(id) {
 
 // #region //* Sweet Configuracion Perfil
 //TODO Inicio SweetAlert Editar Perfil
-async function sweetConfiguracionPerfil(id,tipoUsuario) {
+async function sweetConfiguracionPerfil(id, tipoUsuario) {
     try {
         Swal.fire({
             title: 'Editar Perfil', //? Titulo Modal
@@ -1374,7 +1374,7 @@ async function sweetConfiguracionPerfil(id,tipoUsuario) {
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
                 //? Se traen datos de usuario por ID
-                const datosUsuario = await traerDatosUsuarioPorID(id,tipoUsuario);
+                const datosUsuario = await traerDatosUsuarioPorID(id, tipoUsuario);
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuarioPerfil').value.trim();
                 const apellido = document.querySelector('#apellidoUsuarioPerfil').value.trim();
