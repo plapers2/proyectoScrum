@@ -5,6 +5,6 @@ insert into roles values ('','Instructor');
 
 HACER DE SEGUNDO PARA QUE FUNCIONE TODO !!!!!!!
 POR SEPARADO 
-insert into usuario values ('', 'Admin', 'AdminApellido', '$2y$10$dnfsgAn7j6Dg4ruDfB654uaHFzQbkQIfi7dHZhz3h6BF2UJhr4dcu', 'admin@admin.com', 1);
-insert into usuario values ('', 'Aprendiz', 'AprendizApellido', '$2y$10$dnfsgAn7j6Dg4ruDfB654uaHFzQbkQIfi7dHZhz3h6BF2UJhr4dcu', 'Aprendiz@aprendiz.com', 2);
-insert into usuario values ('', 'Instructor', 'InstructorApellido', '$2y$10$dnfsgAn7j6Dg4ruDfB654uaHFzQbkQIfi7dHZhz3h6BF2UJhr4dcu', 'Instructor@Instructor.com', 3);
+insert into usuario values ('', 'Admin', 'AdminApellido', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'admin@admin.com', 1);
+insert into usuario values ('', 'Aprendiz', 'AprendizApellido', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'Aprendiz@aprendiz.com', 2);
+insert into usuario values ('', 'Instructor', 'InstructorApellido', '$2y$10$GO9MUWQQCyaGRWs.7xPFwuwAugi8VZtKtXaCwcUeK2yXWM.6s3UcW', 'Instructor@Instructor.com', 3);
