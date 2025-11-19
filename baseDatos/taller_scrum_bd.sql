@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 18, 2025 at 01:51 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 18-11-2025 a las 14:27:33
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `taller_scrum_bd`
+-- Base de datos: `taller_scrum_bd`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aprendices`
+-- Estructura de tabla para la tabla `aprendices`
 --
 
 CREATE TABLE `aprendices` (
@@ -32,14 +32,13 @@ CREATE TABLE `aprendices` (
   `nombre_aprendiz` varchar(45) NOT NULL,
   `apellido_aprendiz` varchar(45) NOT NULL,
   `correo_aprendiz` varchar(45) NOT NULL,
-  `contrasena_aprendiz` varchar(255) NOT NULL,
-  `fk_rol_aprendiz` int(11) NOT NULL
+  `contrasena_aprendiz` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cursos`
+-- Estructura de tabla para la tabla `cursos`
 --
 
 CREATE TABLE `cursos` (
@@ -50,33 +49,7 @@ CREATE TABLE `cursos` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `instructores`
---
-
-CREATE TABLE `instructores` (
-  `id_instructor` int(11) NOT NULL,
-  `nombre_instructor` varchar(45) NOT NULL,
-  `apellido_instructor` varchar(45) NOT NULL,
-  `correo_instructor` varchar(45) NOT NULL,
-  `fk_rol_instructor` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `instructores_cursos`
---
-
-CREATE TABLE `instructores_cursos` (
-  `id_pivote` int(11) NOT NULL,
-  `fk_instructor_cursos` int(11) NOT NULL,
-  `fk_curso_cursos` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `roles`
+-- Estructura de tabla para la tabla `roles`
 --
 
 CREATE TABLE `roles` (
@@ -84,19 +57,10 @@ CREATE TABLE `roles` (
   `nombre_rol` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
---
--- Dumping data for table `roles`
---
-
-INSERT INTO `roles` (`id_rol`, `nombre_rol`) VALUES
-(1, 'Aprendiz'),
-(2, 'Instructor'),
-(3, 'Administrador');
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `trabajos`
+-- Estructura de tabla para la tabla `trabajos`
 --
 
 CREATE TABLE `trabajos` (
@@ -104,126 +68,146 @@ CREATE TABLE `trabajos` (
   `calificacion_trabajo` double NOT NULL,
   `comentario_trabajo` varchar(255) NOT NULL,
   `fk_aprendiz_trabajo` int(11) NOT NULL,
-  `fk_instructor_trabajo` int(11) NOT NULL
+  `fk_usuario_trabajo` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `id_usuario` int(11) NOT NULL,
+  `nombre_usuario` varchar(45) NOT NULL,
+  `apellido_usuario` varchar(45) NOT NULL,
+  `pass_usuario` varchar(45) NOT NULL,
+  `correo_usuario` varchar(45) NOT NULL,
+  `fk_rol_usuario` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios_cursos`
+--
+
+CREATE TABLE `usuarios_cursos` (
+  `id_pivote` int(11) NOT NULL,
+  `fk_usuario_cursos` int(11) NOT NULL,
+  `fk_curso_cursos` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `aprendices`
+-- Indices de la tabla `aprendices`
 --
 ALTER TABLE `aprendices`
   ADD PRIMARY KEY (`id_aprendiz`),
-  ADD UNIQUE KEY `fk_correisito_aprendiz` (`correo_aprendiz`),
-  ADD KEY `fk_rol_aprendiz` (`fk_rol_aprendiz`);
+  ADD UNIQUE KEY `fk_correisito_aprendiz` (`correo_aprendiz`);
 
 --
--- Indexes for table `cursos`
+-- Indices de la tabla `cursos`
 --
 ALTER TABLE `cursos`
   ADD PRIMARY KEY (`id_curso`);
 
 --
--- Indexes for table `instructores`
---
-ALTER TABLE `instructores`
-  ADD PRIMARY KEY (`id_instructor`),
-  ADD UNIQUE KEY `fk_correisito_instructor` (`correo_instructor`),
-  ADD KEY `fk_rolesito_instructor` (`fk_rol_instructor`);
-
---
--- Indexes for table `instructores_cursos`
---
-ALTER TABLE `instructores_cursos`
-  ADD PRIMARY KEY (`id_pivote`),
-  ADD KEY `fk_instructor` (`fk_instructor_cursos`),
-  ADD KEY `fk_curso` (`fk_curso_cursos`);
-
---
--- Indexes for table `roles`
+-- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id_rol`);
 
 --
--- Indexes for table `trabajos`
+-- Indices de la tabla `trabajos`
 --
 ALTER TABLE `trabajos`
   ADD PRIMARY KEY (`id_trabajo`),
   ADD KEY `fk_aprendiz` (`fk_aprendiz_trabajo`),
-  ADD KEY `fk_instructor` (`fk_instructor_trabajo`);
+  ADD KEY `fk_instructor` (`fk_usuario_trabajo`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `fk_correisito_instructor` (`correo_usuario`),
+  ADD KEY `fk_rolesito_instructor` (`fk_rol_usuario`);
+
+--
+-- Indices de la tabla `usuarios_cursos`
+--
+ALTER TABLE `usuarios_cursos`
+  ADD PRIMARY KEY (`id_pivote`),
+  ADD KEY `fk_instructor` (`fk_usuario_cursos`),
+  ADD KEY `fk_curso` (`fk_curso_cursos`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `aprendices`
+-- AUTO_INCREMENT de la tabla `aprendices`
 --
 ALTER TABLE `aprendices`
   MODIFY `id_aprendiz` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `cursos`
+-- AUTO_INCREMENT de la tabla `cursos`
 --
 ALTER TABLE `cursos`
   MODIFY `id_curso` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `instructores`
---
-ALTER TABLE `instructores`
-  MODIFY `id_instructor` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `instructores_cursos`
---
-ALTER TABLE `instructores_cursos`
-  MODIFY `id_pivote` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `roles`
+-- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `trabajos`
+-- AUTO_INCREMENT de la tabla `trabajos`
 --
 ALTER TABLE `trabajos`
   MODIFY `id_trabajo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios_cursos`
+--
+ALTER TABLE `usuarios_cursos`
+  MODIFY `id_pivote` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `aprendices`
---
-ALTER TABLE `aprendices`
-  ADD CONSTRAINT `aprendices_ibfk_1` FOREIGN KEY (`fk_rol_aprendiz`) REFERENCES `roles` (`id_rol`);
-
---
--- Constraints for table `instructores`
---
-ALTER TABLE `instructores`
-  ADD CONSTRAINT `instructores_ibfk_1` FOREIGN KEY (`fk_rol_instructor`) REFERENCES `roles` (`id_rol`);
-
---
--- Constraints for table `instructores_cursos`
---
-ALTER TABLE `instructores_cursos`
-  ADD CONSTRAINT `instructores_cursos_ibfk_1` FOREIGN KEY (`fk_instructor_cursos`) REFERENCES `instructores` (`id_instructor`),
-  ADD CONSTRAINT `instructores_cursos_ibfk_2` FOREIGN KEY (`fk_curso_cursos`) REFERENCES `cursos` (`id_curso`);
-
---
--- Constraints for table `trabajos`
+-- Filtros para la tabla `trabajos`
 --
 ALTER TABLE `trabajos`
-  ADD CONSTRAINT `trabajos_ibfk_1` FOREIGN KEY (`fk_instructor_trabajo`) REFERENCES `instructores` (`id_instructor`),
+  ADD CONSTRAINT `trabajos_ibfk_1` FOREIGN KEY (`fk_usuario_trabajo`) REFERENCES `usuario` (`id_usuario`),
   ADD CONSTRAINT `trabajos_ibfk_2` FOREIGN KEY (`fk_aprendiz_trabajo`) REFERENCES `aprendices` (`id_aprendiz`);
+
+--
+-- Filtros para la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `instructores_ibfk_1` FOREIGN KEY (`fk_rol_usuario`) REFERENCES `roles` (`id_rol`);
+
+--
+-- Filtros para la tabla `usuarios_cursos`
+--
+ALTER TABLE `usuarios_cursos`
+  ADD CONSTRAINT `instructores_cursos_ibfk_1` FOREIGN KEY (`fk_usuario_cursos`) REFERENCES `usuario` (`id_usuario`),
+  ADD CONSTRAINT `instructores_cursos_ibfk_2` FOREIGN KEY (`fk_curso_cursos`) REFERENCES `cursos` (`id_curso`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
