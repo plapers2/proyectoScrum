@@ -1,198 +1,174 @@
 <?php
 session_start();
 require_once '../models/MySQL.php';
+
 $mysql = new MySQL();
 $mysql->conectar();
 
-if (!$_SESSION) {
-    header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+/* VALIDAR SESIÓN */
+if (!isset($_SESSION['tipoUsuario'])) {
+    header('Location: login.php?error=true&message=Debes iniciar sesión primero&title=Acceso denegado');
     exit;
 }
-switch ($_SESSION['tipoUsuario']) {
-    case 'Administrador':
-        header("Location: administradores.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
-        exit;
-    case 'Instructor':
-        header("Location: instructores.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
-        exit;
-    default:
-    break;
-};
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices 
-JOIN roles ON roles.id_rol = usuario.fk_rol_usuario");
-$usuario = [];
+/* SOLO APRENDICES PUEDEN ENTRAR */
+if ($_SESSION['tipoUsuario'] !== 'aprendiz') {
+    header("Location: libros.php?error=true&message=Acceso solo para aprendices&title=Acceso denegado");
+    exit;
+}
+
+/* CONSULTA APRENDICES */
+$resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices");
+$usuarios = [];
+
 while ($fila = mysqli_fetch_assoc($resultado)) {
-    $usuario[] = $fila;
+    $usuarios[] = $fila;
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Dashboard - Biblioteca ADSO</title>
+
+    <title>Panel de Aprendiz - Biblioteca ADSO</title>
+
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body class="sb-nav-fixed">
-    <!-- Barra de navegación superior -->
+
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <!-- Navbar Brand -->
-        <a class="navbar-brand ps-3" href="<?php echo ($_SESSION['tipoUsuario'] != "Administrador") ? "libros.php" :  "dashboard.php" ?>">
-            <?php echo $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
+        <a class="navbar-brand ps-3" href="libros.php">
+            <?= $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
         </a>
+
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
-        <!-- Sidebar Toggle -->
 
-        <!-- Buscador superior -->
-        <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        </div>
-        <!-- Dropdown usuario -->
-        <ul class="navbar-nav ms-100 ms-md-0 me-3 me-lg-4">
+        <ul class="navbar-nav ms-auto me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" onclick="sweetConfiguracionPerfil('<?php echo $_SESSION['idUsuario'] ?>','<?php echo $_SESSION['tipoUsuario'] ?>')"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <hr class="dropdown-divider" />
+                        <button class="dropdown-item text-success" 
+                            onclick="sweetConfiguracionPerfil('<?= $_SESSION['idUsuario'] ?>','<?= $_SESSION['tipoUsuario'] ?>')">
+                            <i class="bi bi-person-gear fs-3"></i> Configuración de perfil
+                        </button>
                     </li>
-                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+
+                    <li><hr class="dropdown-divider" /></li>
+
+                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php">
+                        <i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión
+                    </a></li>
                 </ul>
             </li>
         </ul>
     </nav>
+
     <div id="layoutSidenav">
+
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
-                    <div class="nav">
-                        <?php
-                        if ($_SESSION['tipoUsuario'] === "Administrador") {
-                            echo '<div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link" href="dashboard.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Panel de Administracion
-                        </a>';
-                        };
-                        ?>
-                        <div class="sb-sidenav-menu-heading">Libros</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Gestión de Libros
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="libros.php">Búsqueda de Libros</a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReservas"
-                                    aria-expanded="true" aria-controls="collapseReservas">
-                                    Reservas
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
 
-                                <div class="collapse" id="collapseReservas" data-bs-parent="#collapseLibros">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="reservasPendientes.php">Reservas Pendientes</a>
-                                        <a class="nav-link" href="reservasHistorial.php">Historial de Reservas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="prestamos.php">Préstamos</a>
-                            </nav>
-                        </div>
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Aprendiz</div>
+
+                        <a class="nav-link" href="libros.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                            Buscar Libros
+                        </a>
+
+                        <a class="nav-link" href="reservasPendientes.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
+                            Mis Reservas
+                        </a>
+
+                        <a class="nav-link" href="prestamos.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-hand-holding"></i></div>
+                            Mis Préstamos
+                        </a>
                     </div>
+
                 </div>
+
                 <div class="sb-sidenav-footer">
                     <div class="small">Logueado como:</div>
-                    <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['tipoUsuario'] . "</p>"; ?>
+                    <p class="text-uppercase fw-bold mb-0"><?= $_SESSION['tipoUsuario']; ?></p>
                 </div>
             </nav>
         </div>
-        <!-- Contenido principal -->
+
         <div id="layoutSidenav_content">
-            <main>
-                <div class="container-fluid px-4">
-                    <h1 class="mt-4">Panel de Administracion</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de Administracion</li>
-                    </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Insertar Usuario</button>
-                    <button class="btn btn-success mb-4" id="generarArchivos"><i class="bi bi-folder-plus"></i> Generar Archivos</button>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Administradores
-                        </div>
-                        <div class="card-body">
-                            <table id="tablaEmpleados">
-                                <thead>
+            <main class="container-fluid px-4">
+                <h1 class="mt-4">Panel de Aprendiz</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item active">Listado de Aprendices</li>
+                </ol>
+
+                <div class="card mb-4">
+                    <div class="card-header"><i class="fas fa-table me-1"></i> Aprendices Registrados</div>
+
+                    <div class="card-body">
+                        <table id="tablaEmpleados">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Correo</th>
+                                    <th>Curso</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach ($usuarios as $valor): ?>
                                     <tr>
-
-                                        <th>id_aprendiz</th>
-                                        <th>nombre_aprendiz</th>
-                                        <th>apellido_aprendiz</th>
-                                        <th>pass_aprendiz</th>
-                                        <th>correo_aprendiz</th>
-                                         <th>cursos_id_curso</th>
-                                        <th>Acciones</th>
+                                        <td><?= $valor['id_aprendiz']; ?></td>
+                                        <td><?= $valor['nombre_aprendiz']; ?></td>
+                                        <td><?= $valor['apellido_aprendiz']; ?></td>
+                                        <td><?= $valor['correo_aprendiz']; ?></td>
+                                        <td><?= $valor['cursos_id_curso']; ?></td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($usuarios as $valor):
-                                        if ($valor['tipoUsuario'] != 'aprendices'):  ?>
-                                            <tr>
+                                <?php endforeach; ?>
+                            </tbody>
 
-                                                <td><?= $valor['id_aprendiz ']; ?></td>
-                                                <td><?= $valor['nombre_aprendiz']; ?></td>
-                                                <td><?= $valor['apellido_aprendiz']; ?></td>
-                                                 <td><?= $valor['pass_aprendiz ']; ?></td>
-                                                <td><?= $valor['correo_aprendiz']; ?></td>
-                                                <td><?= $valor['cursos_id_curso ']; ?></td>
-                                                
-                                            </tr>
-                                    <?php endif;
-                                    endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                        </table>
                     </div>
                 </div>
             </main>
+
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; ADSO 3064749 / 2025</div>
+                    <div class="d-flex justify-content-between small">
+                        <div class="text-muted">Copyright ADSO 3064749 – 2025</div>
+
                         <div>
-                            <button class="btn btn-link" id="politicaPrivacidad">Política &amp; Privacidad</button>
+                            <button class="btn btn-link" id="politicaPrivacidad">Política & Privacidad</button>
                             &middot;
-                            <button class="btn btn-link" id="terminosCondiciones">Términos &amp; Condiciones</button>
+                            <button class="btn btn-link" id="terminosCondiciones">Términos & Condiciones</button>
                         </div>
                     </div>
                 </div>
             </footer>
+
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
     <script src="js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-    <script src="js/datatables/datatables-simple-demo.js"></script>
     <script src="js/sweetAlerts.js"></script>
 </body>
 
 </html>
-<?php $baseDatos->desconectar(); ?> -->
+
+<?php $mysql->desconectar(); ?>
