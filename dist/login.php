@@ -14,7 +14,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Login - Biblioteca ADSO</title>
+    <title>Login - Proyecto Scrum</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
@@ -42,6 +42,15 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                                         <div class="form-floating mb-3">
                                             <input class="form-control" id="passLogin" type="password" placeholder="Contraseña" name="passLogin" />
                                             <label for="passLogin">Contraseña</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="tipoUsuarioLogin" name="tipoUsuarioLogin">
+                                                <option selected value="nada">Selecciona tu rol</option>
+                                                <option value="Administrador">Administrador</option>
+                                                <option value="Instructor">Instructor</option>
+                                                <option value="Aprendiz">Aprendiz</option>
+                                            </select>
+                                            <label for="tipoUsuarioLogin" class="form-label">Rol</label>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
                                             <button type="submit" class="btn btn-primary form-control">Enviar</button>
