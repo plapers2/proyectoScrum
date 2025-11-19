@@ -33,8 +33,8 @@ document
           );
 
           const resultado = await respuesta.text();
-
-          if (resultado.trim() === "OK") {
+          console.log(resultado);
+          if (resultado.trim() === "ok") {
             window.location.href = "login.php";
           } else {
             Swal.fire({

@@ -228,6 +228,8 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
         <script src="js/instructores/eliminarInstructor.js"></script>
     <?php endif; ?>
 
+    <script src="js/cerrar_sesion.js"></script>
+
     <!--CDNS-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
