@@ -13,8 +13,7 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario 
-JOIN tipoUsuario ON tipoUsuario.idTipoUsuario = usuario.fkTipoUsuario
-JOIN estado ON estado.idEstado = usuario.fkEstadoUsuario");
+JOIN roles ON roles.id_rol = usuario.fk_rol_usuario");
 $usuario = [];
 while ($fila = mysqli_fetch_assoc($resultado)) {
     $usuario[] = $fila;

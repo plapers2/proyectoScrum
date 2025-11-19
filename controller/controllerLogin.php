@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         };
         //* Verificaciones
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if (password_verify($pass, $usuario['passUsuario'])) {
+            if (password_verify($pass, $usuario['pass_usuario'])) {
                 //* Se guardan credenciales en variable global $_SESSION
                 $_SESSION['idUsuario'] = $usuario['id_usuario'];
-                $_SESSION['emailUsuario'] = $usuario['email_usuario'];
+                $_SESSION['emailUsuario'] = $usuario['correo_usuario'];
                 $_SESSION['nombreUsuario'] = $usuario['nombre_usuario'];
                 $_SESSION['idTipoUsuario'] = $usuario['id_rol'];
                 $_SESSION['tipoUsuario'] = $usuario['nombre_rol'];
