@@ -213,7 +213,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                             <div class="card login-card">
                                 <div class="card-header text-center">
                                     <i class="fas fa-book-reader"></i>
-                                    <h3 class="font-weight-light">Biblioteca ADSO</h3>
+                                    <h3 class="font-weight-light">Proyecto Scrum ADSO</h3>
                                     <p class="mb-0 small">Inicia sesión para continuar</p>
                                 </div>
                                 <div class="card-body">
