@@ -4,19 +4,36 @@ if (!$_SESSION) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
-if ($_SESSION['tipoUsuario'] != 'Administrador') {
-    header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
-    exit;
-}
+switch ($_SESSION['tipoUsuario']) {
+    case 'Instructor':
+        header("Location: instructores.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
+        exit;
+    case 'Aprendiz':
+        header("Location: aprendices.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
+        exit;
+    default:
+        break;
+};
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM usuario 
-JOIN roles ON roles.id_rol = usuario.fk_rol_usuario");
-$usuario = [];
-while ($fila = mysqli_fetch_assoc($resultado)) {
-    $usuario[] = $fila;
+$instructoresDB = $mysql->efectuarConsulta("SELECT * FROM instructores");
+$instructores = [];
+while ($fila = mysqli_fetch_assoc($instructoresDB)) {
+    $instructores[] = $fila;
+}
+
+$aprendicesDB = $mysql->efectuarConsulta("SELECT * FROM aprendices;");
+$aprendices = [];
+while ($fila = mysqli_fetch_assoc($aprendicesDB)) {
+    $aprendices[] = $fila;
+}
+
+$adminsDB = $mysql->efectuarConsulta("SELECT * FROM administradores;");
+$admins = [];
+while ($fila = mysqli_fetch_assoc($adminsDB)) {
+    $admins[] = $fila;
 }
 ?>
 <!DOCTYPE html>
@@ -58,7 +75,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" onclick="sweetConfiguracionPerfil('<?php echo $_SESSION['idUsuario'] ?>','<?php echo $_SESSION['tipoUsuario'] ?>')"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['idUsuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
@@ -130,46 +147,35 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                             Administradores
                         </div>
                         <div class="card-body">
-                            <table id="tablaEmpleados">
+                            <table id="tablaAdministradores">
                                 <thead>
                                     <tr>
-
+                                        <th>ID</th>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Email</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
-
+                                        <th>ID</th>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Email</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['tipoUsuario'] != 'Cliente') {  ?>
-                                            <tr>
-
-                                                <td><?php echo $filaUsuario['nombreUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['apellidoUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['emailUsuario']; ?></td>
-                                                <td><?php echo '<span class="badge p-2 ms-5 mt-1 fs-6  bg-' . (($filaUsuario['tipoEstado'] === 'Activo') ? 'success"><i class="bi bi-check-circle"></i> ' : 'danger"><i class="bi bi-x-circle"></i> ')  . $filaUsuario['tipoEstado'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-between w-100"><?php if ($filaUsuario['tipoEstado'] == "Activo") {
-                                                                                                        echo '<button onclick="sweetUsuarioDesactivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-danger"><i class="bi bi-person-fill-x"></i> Desactivar</button>';
-                                                                                                    } else {
-                                                                                                        echo '<button onclick="sweetUsuarioActivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-success"><i class="bi bi-person-fill-check"></i> Activar</a>';
-                                                                                                    }; ?>
-                                                    <?php echo '<button onclick="sweetUsuarioEditar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-warning ms-2" id="usuarioEditar"><i class="bi bi-person-video2"></i> Editar</button>'; ?>
-                                                    <!-- Se tiene que quemar el evento por que la tabla no deja asignar con addEventListener -->
-                                                </td>
-                                            </tr>
-                                    <?php }
+                                    <?php foreach ($admins as $filaUsuario) {
+                                    ?>
+                                        <tr>
+                                            <td><?php echo $filaUsuario['id_administrador'] ?></td>
+                                            <td><?php echo $filaUsuario['nombre_administrador']; ?></td>
+                                            <td><?php echo $filaUsuario['apellido_administrador']; ?></td>
+                                            <td><?php echo $filaUsuario['correo_administrador']; ?></td>
+                                        </tr>
+                                    <?php
                                     } ?>
                                 </tbody>
                             </table>
@@ -178,47 +184,76 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
-                            Clientes
+                            Instructores
                         </div>
                         <div class="card-body">
-                            <table id="tablaClientes">
+                            <table id="tablaInstructores">
                                 <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Email</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
-
+                                        <th>ID</th>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Email</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['tipoUsuario'] == 'Cliente') { ?>
-                                            <tr>
-                                                <td><?php echo $filaUsuario['nombreUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['apellidoUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['emailUsuario']; ?></td>
-                                                <td><?php echo '<span class="badge p-2 ms-5 mt-1 fs-6 bg-' . (($filaUsuario['tipoEstado'] === 'Activo') ? 'success"><i class="bi bi-check-circle"></i> ' : 'danger"><i class="bi bi-x-circle"></i> ')  . $filaUsuario['tipoEstado'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-between w-100"><?php if ($filaUsuario['tipoEstado'] == "Activo") {
-                                                                                                        echo '<button onclick="sweetUsuarioDesactivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-danger"><i class="bi bi-person-fill-x"></i> Desactivar</button>';
-                                                                                                    } else {
-                                                                                                        echo '<button onclick="sweetUsuarioActivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-success"><i class="bi bi-person-fill-check"></i> Activar</a>';
-                                                                                                    }; ?>
-                                                    <?php echo '<button onclick="sweetUsuarioEditar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-warning ms-2" id="usuarioEditar"><i class="bi bi-person-video2"></i> Editar</button>'; ?>
-                                                    <!-- Se tiene que quemar el evento por que la tabla no deja asignar con addEventListener -->
-                                                </td>
-                                            </tr>
+                                    <?php foreach ($instructores as $filaInstructor) { ?>
+                                        <tr>
+                                            <td><?php echo $filaInstructor['id_instructor']; ?></td>
+                                            <td><?php echo $filaInstructor['nombre_instructor']; ?></td>
+                                            <td><?php echo $filaInstructor['apellido_instructor']; ?></td>
+                                            <td><?php echo $filaInstructor['correo_instructor']; ?></td>
+                                        </tr>
                                     <?php }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            Aprendices
+                        </div>
+                        <div class="card-body">
+                            <table id="tablaAprendices">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    <?php foreach ($aprendices as $filaAprendices) { ?>
+                                        <tr>
+                                            <td><?php echo $filaAprendices['id_aprendiz']; ?></td>
+                                            <td><?php echo $filaAprendices['nombre_aprendiz']; ?></td>
+                                            <td><?php echo $filaAprendices['apellido_aprendiz']; ?></td>
+                                            <td><?php echo $filaAprendices['correo_aprendiz']; ?></td>
+                                        </tr>
+                                    <?php
                                     }
                                     ?>
                                 </tbody>
