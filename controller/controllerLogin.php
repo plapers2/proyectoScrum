@@ -8,23 +8,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mysql->conectar();
         //* Sanitizacion de email (la PassWord no se sanitiza nunca)
         $nombreUsuario = filter_var(trim($_POST['usuarioLogin']), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $tipoUsuario = filter_var(trim($_POST['tipoUsuarioLogin'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
         $pass = $_POST['passLogin'];
         try {
-            $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario JOIN roles on roles.id_rol = usuario.fk_rol_usuario where usuario.nombre_usuario = '$nombreUsuario'; ");
+            switch ($tipoUsuario) {
+                case 'Administrador':
+                    $resultado = $mysql->efectuarConsulta("SELECT * FROM administradores WHERE nombre_administrador = '$nombreUsuario';");
+                    $tipo = '_administrador';
+                    break;
+                case 'Instructor':
+                    $resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE nombre_instructor = '$nombreUsuario';");
+                    $tipo = '_instructor';
+                    break;
+                case 'Aprendiz':
+                    $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE nombre_aprendiz = '$nombreUsuario';");
+                    $tipo = '_aprendiz';
+                    break;
+                default:
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'message' => 'Selecciona un rol!', 'error' => $th]);
+                    break;
+            }
         } catch (\Throwable $th) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario', 'error' => $th]);
         };
         //* Verificaciones
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if (password_verify($pass, $usuario['pass_usuario'])) {
+            if (password_verify($pass, $usuario['pass' . $tipo])) {
                 //* Se guardan credenciales en variable global $_SESSION
-                $_SESSION['idUsuario'] = $usuario['id_usuario'];
-                $_SESSION['emailUsuario'] = $usuario['correo_usuario'];
-                $_SESSION['nombreUsuario'] = $usuario['nombre_usuario'];
-                $_SESSION['idTipoUsuario'] = $usuario['id_rol'];
-                $_SESSION['tipoUsuario'] = $usuario['nombre_rol'];
-                $_SESSION['apellidoUsuario'] = $usuario['apellido_usuario'];
+                $_SESSION['idUsuario'] = $usuario['id' . $tipo];
+                $_SESSION['emailUsuario'] = $usuario['correo' . $tipo];
+                $_SESSION['nombreUsuario'] = $usuario['nombre' . $tipo];
+                $_SESSION['tipoUsuario'] = $usuario[$tipo];
+                $_SESSION['apellidoUsuario'] = $usuario['apellido' . $tipo];
+                switch ($tipo) {
+                    case 'administrador':
+                        $tipo = 'Administrador';
+                        break;
+                    case 'instructor':
+                        $tipo = 'Instructor';
+                        break;
+                    case 'aprendiz':
+                        $tipo = 'Aprendiz';
+                        break;
+                    default:
+                        break;
+                }
                 //* Exito
                 if ($_SESSION['tipoUsuario'] == 'Administrador') {
                     header("Location: ../dist/dashboard.php");

@@ -12,15 +12,6 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-
-$resultado = $mysql->efectuarConsulta("SELECT * FROM libro_has_categorias as pivote
-JOIN categorias ON categorias.idCategoria = pivote.fkCategoriaPivote
-JOIN libro ON libro.idLibro = pivote.fkLibroPivote
-GROUP BY libro.idLibro ORDER BY libro.idLibro ASC;");
-$libros = [];
-while ($fila = mysqli_fetch_assoc($resultado)) {
-    $libros[] = $fila;
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
