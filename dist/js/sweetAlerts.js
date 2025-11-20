@@ -107,7 +107,9 @@ registrarPrestamo.forEach((element) => {
 // #region //* Lanzar sweet errores
 //TODO Inicio Lanzar sweet errores
 window.onload = function () {
-    const a = document.getElementById('alertasErrores').click();
+    if (document.querySelector("#alertasErrores")) {
+        const a = document.querySelector("#alertasErrores").click();
+    }
 };
 //TODO Fin Lanzar sweet errores
 // #endregion

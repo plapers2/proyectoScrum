@@ -49,3 +49,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 });
+window.addEventListener('DOMContentLoaded', (event) => {
+    // Simple-DataTables
+    // https://github.com/fiduswriter/Simple-DataTables/wiki
+
+    const tablaTrabajos = document.getElementById('tablaTrabajos');
+    if (tablaTrabajos) {
+        new simpleDatatables.DataTable(tablaTrabajos, {
+            labels: {
+                placeholder: 'Buscar...',
+                perPage: 'registros por página',
+                noRows: 'No se encontraron resultados',
+                info: 'Mostrando {start} a {end} de {rows} registros',
+                noResults: 'No hay resultados para tu búsqueda',
+            },
+        });
+    }
+});
