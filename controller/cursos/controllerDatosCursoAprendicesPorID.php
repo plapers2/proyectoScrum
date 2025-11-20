@@ -7,7 +7,7 @@ if (!$_SESSION) {
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+$id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
 
 try {
     $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE cursos_id_curso = $id;");

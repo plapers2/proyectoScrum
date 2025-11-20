@@ -10,15 +10,18 @@ $mysql->conectar();
 $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
 
 try {
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos_has_instructores WHERE cursos_id_curso = $id;");
+    $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos_has_instructores as pivote
+    JOIN instructores ON instructores.id_instructor = pivote.instructores_id_instructor
+    WHERE pivote.cursos_id_curso = $id;");
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al traer datos de curso por ID', 'error' => $th]);
+    echo json_encode(['success' => false, 'message' => 'Error al traer datos de instructores por ID', 'error' => $th]);
 }
 $datos = [];
 while ($row = mysqli_fetch_assoc($resultado)) {
     $row['cursos_id_curso'] = (int)$row['cursos_id_curso'];
     $row['instructores_id_instructor'] = (int)$row['instructores_id_instructor'];
+    $row['id_instructor'] = (int)$row['id_instructor'];
     $datos[] = $row;
 }
 header('Content-Type: application/json');

@@ -469,12 +469,42 @@ async function contenidoCursoVerAprendices(id) {
     try {
         //? Se traen datos de usuario por ID
         const aprendices = await traerDatosCursoAprendicesPorID(id);
-        console.log(aprendices.nombre_aprendiz);
         const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
-        aprendices.forEach((element) => {
-            const li = crearLi(element.nombre_aprendiz);
+        if (aprendices.length > 0) {
+            aprendices.forEach((element) => {
+                const li = crearLi(element.nombre_aprendiz + ' ' + element.apellido_aprendiz);
+                div.append(li);
+            });
+        } else {
+            const li = crearLi('No hay ningun aprendiz asociado a este curso!');
             div.append(li);
-        });
+        }
+        return div;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Curso Ver Aprendices
+// #endregion
+
+// #region //* Contenido Curso Ver Instructores
+//TODO Inicio Contenido Curso Ver Instructores
+async function contenidoCursoVerInstructores(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const aprendices = await traerDatosCursoInstructoresPorID(id);
+        const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
+        if (aprendices.length > 0) {
+            aprendices.forEach((element) => {
+                const li = crearLi(element.nombre_aprendiz + ' ' + element.apellido_aprendiz);
+                div.append(li);
+            });
+        } else {
+            const li = crearLi('No hay ningun instructor asociado a este curso!');
+            div.append(li);
+        }
         return div;
     } catch (e) {
         //? Control de errores
@@ -777,55 +807,17 @@ async function sweetCursoVerAprendices(id) {
 //TODO Fin SweetAlert Curso Ver Aprendices
 // #endregion
 
-// #region //* Sweet Curso Desactivar
-//TODO Inicio SweetAlert Curso Desactivar
-async function sweetCursoDesactivar(id) {
+// #region //* Sweet Curso Ver Instructores
+//TODO Inicio SweetAlert Curso Ver Instructores
+async function sweetCursoVerInstructores(id) {
     try {
         Swal.fire({
-            title: 'Desactivar Curso', //? Titulo Modal
-            icon: 'warning', //? Icono Modal
-            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoCursoDesctivar(id), //? Contenido HTML
-            confirmButtonText: 'Confirmar', //? Texto boton confirmar
-            showCancelButton: true, //? Mostrar boton cancelar
-            cancelButtonText: 'Cancelar', //? Texto boton cancelar
-            focusConfirm: false, //? Desactivar focus al boton crear
-            confirmButtonColor: '#007bff', //? Color boton confirmar
-            cancelButtonColor: '#dc3545', //? Color boton cancelar
-            preConfirm: () => {
-                //? Retornar valores finales
-                return id;
-            },
-        }).then(async (result) => {
-            //? Verificar click en boton confirmar
-            if (result.isConfirmed) {
-                //? Traer datos retornados del preConfirm
-                const datos = result.value;
-                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
-                let formData = new FormData();
-                formData.append('id', datos);
-                //? Solicitud de datos a controller
-                const json = await fetch('../controller/cursos/controllerCursoDesactivar.php', {
-                    method: 'POST',
-                    body: formData,
-                });
-                //? Conversion a JSON valido
-                const response = await json.json();
-                //? Verificacion de proceso (success = True: Exito, success = False: Error)
-                if (response.success) {
-                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
-                        () => {
-                            location.reload();
-                        },
-                    );
-                } else {
-                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
-                        () => {
-                            location.reload();
-                        },
-                    );
-                }
-            }
+            title: 'Instructores Asociados',
+            html: await contenidoCursoVerInstructores(id),
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            cancelButtonColor: '#6c757d',
         });
     } catch (e) {
         //? Control de errores
@@ -833,7 +825,7 @@ async function sweetCursoDesactivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Curso Desactivar
+//TODO Fin SweetAlert Curso Ver Instructores
 // #endregion
 
 //! /////////////////////////////////////////////////////////
