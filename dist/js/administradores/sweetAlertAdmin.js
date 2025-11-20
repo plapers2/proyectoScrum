@@ -379,19 +379,19 @@ async function contenidoAdminEditar(id) {
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario.nombre_administrador);
+        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombre_administrador);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Apellido
         const apellidoDiv = crearDivForm();
         const apellidoLabel = crearLabelForm('apellidoUsuario', 'Apellido');
-        const apellidoInput = crearInputForm('apellidoUsuario', 'text', datosUsuario.apellido_administrador);
+        const apellidoInput = crearInputForm('apellidoUsuario', 'text', datosUsuario[0].apellido_administrador);
         apellidoDiv.append(apellidoLabel);
         apellidoDiv.append(apellidoInput);
         //? Email
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Correo');
-        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario.correo_administrador);
+        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].correo_administrador);
         emailDiv.append(emailLabel);
         emailDiv.append(emailInput);
         //? Password
@@ -426,7 +426,7 @@ async function contenidoAdminActivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el Administrador ${admin.nombre_administrador} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el Administrador ${admin[0].nombre_administrador} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -451,7 +451,7 @@ async function contenidoAdminDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el Administrador ${admin.nombre_administrador} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el Administrador ${admin[0].nombre_administrador} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -661,7 +661,7 @@ async function sweetAdminEditar(id) {
                 let bool = false;
                 if (pass == null || pass == '') {
                     //? Si se dejo vacio se asigna la contraseña anterior
-                    pass = datosUsuario.pass_administrador;
+                    pass = datosUsuario[0].pass_administrador;
                     bool = true;
                 }
                 //? Verificar que los campos esten llenos
@@ -670,7 +670,7 @@ async function sweetAdminEditar(id) {
                     return false;
                 }
                 //? Verificacion de Email del Usuario
-                if (email != datosUsuario.correo_administrador) {
+                if (email != datosUsuario[0].correo_administrador) {
                     let boolEmail = await verificarEmailAdmin(email);
                     if (boolEmail == false) {
                         Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');

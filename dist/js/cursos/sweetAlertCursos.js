@@ -55,6 +55,58 @@ async function traerDatosCursoPorID(id) {
 //TODO Fin Funcion Traer Datos Admin (por id)
 // #endregion
 
+// #region //* Traer Datos Curso Aprendices (por id)
+//TODO Inicio Funcion Traer Datos Curso Aprendices (por id)
+async function traerDatosCursoAprendicesPorID(id) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('id', id);
+        console.log(id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/cursos/controllerDatosCursoAprendicesPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        console.log(datos);
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Datos Curso Aprendices (por id)
+// #endregion
+
+// #region //* Traer Datos Curso Instructores (por id)
+//TODO Inicio Funcion Traer Datos Curso Instructores (por id)
+async function traerDatosCursoInstructoresPorID(id) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('id', id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/cursos/controllerDatosCursoInstructoresPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Traer Datos Curso Instructores (por id)
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -411,6 +463,28 @@ async function contenidoCursoDesctivar(id) {
 //TODO Fin Contenido Curso Desactivar
 // #endregion
 
+// #region //* Contenido Curso Ver Aprendices
+//TODO Inicio Contenido Curso Ver Aprendices
+async function contenidoCursoVerAprendices(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const aprendices = await traerDatosCursoAprendicesPorID(id);
+        console.log(aprendices.nombre_aprendiz);
+        const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
+        aprendices.forEach((element) => {
+            const li = crearLi(element.nombre_aprendiz);
+            div.append(li);
+        });
+        return div;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Curso Ver Aprendices
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Contenidos de HTML para los SweetAlert
 //! /////////////////////////////////////////////////////////
@@ -621,6 +695,86 @@ async function sweetCursoActivar(id) {
     }
 }
 //TODO Fin SweetAlert Curso Activar
+// #endregion
+
+// #region //* Sweet Curso Desactivar
+//TODO Inicio SweetAlert Curso Desactivar
+async function sweetCursoDesactivar(id) {
+    try {
+        Swal.fire({
+            title: 'Desactivar Curso', //? Titulo Modal
+            icon: 'warning', //? Icono Modal
+            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
+            html: await contenidoCursoDesctivar(id), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: () => {
+                //? Retornar valores finales
+                return id;
+            },
+        }).then(async (result) => {
+            //? Verificar click en boton confirmar
+            if (result.isConfirmed) {
+                //? Traer datos retornados del preConfirm
+                const datos = result.value;
+                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                let formData = new FormData();
+                formData.append('id', datos);
+                //? Solicitud de datos a controller
+                const json = await fetch('../controller/cursos/controllerCursoDesactivar.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+                //? Conversion a JSON valido
+                const response = await json.json();
+                //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                if (response.success) {
+                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                } else {
+                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                }
+            }
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Curso Desactivar
+// #endregion
+
+// #region //* Sweet Curso Ver Aprendices
+//TODO Inicio SweetAlert Curso Ver Aprendices
+async function sweetCursoVerAprendices(id) {
+    try {
+        Swal.fire({
+            title: 'Aprendices Asociados',
+            html: await contenidoCursoVerAprendices(id),
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            cancelButtonColor: '#6c757d',
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Curso Ver Aprendices
 // #endregion
 
 // #region //* Sweet Curso Desactivar

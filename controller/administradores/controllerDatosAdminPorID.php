@@ -15,9 +15,10 @@ try {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Error al traer datos de administrador por ID', 'error' => $th]);
 }
-$datos = mysqli_fetch_assoc($resultado);
-if ($datos) {
-    $datos['id_administrador'] = (int)$datos['id_administrador'];
+$datos = [];
+while ($row = mysqli_fetch_assoc($resultado)) {
+    $row['id_administrador'] = (int)$row['id_administrador'];
+    $datos[] = $row;
 }
 header('Content-Type: application/json');
 echo json_encode($datos);
