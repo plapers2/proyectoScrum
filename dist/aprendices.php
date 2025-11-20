@@ -31,15 +31,9 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
 }
 
 $resultadoTrabajos = $mysql->efectuarConsulta("
-    SELECT 
-        trabajos.*, 
-        instructores.nombre_instructor,
-        aprendices.nombre_aprendiz
-    FROM trabajos
-    LEFT JOIN instructores 
-        ON trabajos.instructores_id_instructor = instructores.id_instructor
-    LEFT JOIN aprendices 
-        ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+    SELECT instructores.nombre_instructor,instructores.apellido_instructor,instructores.estado_instructor, trabajos.ruta_trabajo,trabajos.fecha_limite_trabajo,trabajos.aprendices_id_aprendiz
+FROM instructores
+	LEFT JOIN trabajos ON trabajos.instructores_id_instructor = instructores.id_instructor
     WHERE trabajos.aprendices_id_aprendiz = $id
 ");
 
@@ -249,12 +243,11 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
 
                                 <thead>
                                     <tr>
-                                        <th>ID Trabajo</th>
-                                        <th>Calificacion</th>
-                                        <th>Archivo</th>
-                                        <th>Comentario</th>
+                                        <th>nombre_instructor</th>
+                                        <th>apellido_instructor</th>
+                                        <th>estado_instructor</th>
+                                        <th>ruta_trabajo</th>
                                         <th>Fecha Limite</th>
-                                        <th>Instructor</th>
                                         <th>Aprendiz</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -263,13 +256,14 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                 <tbody>
                                     <?php foreach ($trabajos as $t): ?>
                                         <tr>
-                                            <td><?= $t["id_trabajo"]; ?></td>
-                                            <td><?= $t["calificacion_trabajo"]; ?></td>
-                                            <td><?= $t["ruta_trabajo"]; ?></td>
-                                            <td><?= $t["comentario_trabajo"]; ?></td>
-                                            <td><?= $t["fecha_limite_trabajo"]; ?></td>
-                                            <td><?= $t["nombre_instructor"]; ?></td>
-                                            <td><?= $t["nombre_aprendiz"]; ?></td>
+                                          <td><?= $t["nombre_instructor"]; ?></td>
+<td><?= $t["apellido_instructor"]; ?></td>
+<td><?= $t["estado_instructor"]; ?></td>
+<td><?= $t["ruta_trabajo"]; ?></td>
+<td><?= $t["fecha_limite_trabajo"]; ?></td>
+<td><?= $t["aprendices_id_aprendiz"]; ?></td>
+
+                                            
 
                                             <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                                                 <td>
