@@ -134,6 +134,9 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                             <li class="breadcrumb-item active">Listado de aprendices</li>
                         </ol>
                     <?php endif; ?>
+                    <div class="text-end">
+                        <button class="btn btn-success mb-2" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Aprendiz</button>
+                    </div>
 
                     <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                         <h1 class="mt-4">Mi Perfil de Aprendiz</h1>
