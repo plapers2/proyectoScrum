@@ -47,5 +47,8 @@ class MySQL
         }
 
         return $resultado;
-    }
+    }public function getConexion() {
+    return $this->conexion;
+}
+
 }
