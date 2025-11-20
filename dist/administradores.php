@@ -182,8 +182,13 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                                             <td><?php echo $filaUsuario['apellido_administrador']; ?></td>
                                             <td><?php echo $filaUsuario['correo_administrador']; ?></td>
                                             <td>
-                                                <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Editar</button>
-                                                <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Eliminar</button>
+                                                <button class="btn btn-warning mb-4" id="usuarioInsertar" onclick="sweetAdminEditar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
+                                                <?php if ($filaUsuario['estado_administrador'] == 'Activo') { ?>
+                                                    <button class="btn btn-danger mb-4" id="administradorDesactivar" onclick="sweetAdminDesactivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-info mb-4" id="administradorActivar" onclick="sweetAdminActivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                <?php } ?>
+
                                             </td>
                                         </tr>
                                     <?php

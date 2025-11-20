@@ -32,13 +32,12 @@ adminInsertar.forEach((element) => {
 
 // #region //* Verificar Email Admin
 //TODO Inicio Funcion verificarEmailAdmin
-async function verificarEmailAdmin(email, tipoUsuario) {
+async function verificarEmailAdmin(email) {
     try {
-        console.log(tipoUsuario);
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('email', email);
-        formData.append('tipoUsuario', tipoUsuario);
+        formData.append('tipoUsuario', 'Administrador');
         //? Solicitud de datos a controller
         const response = await fetch('../controller/controllerVerifyEmail.php', {
             method: 'POST',
@@ -371,31 +370,28 @@ async function contenidoAdminInsertar() {
 
 // #region //* Contenido Usuario Editar
 //TODO Inicio Contenido Usuario Editar
-async function contenidoUsuarioEditar(id, tipoUsuario) {
+async function contenidoAdminEditar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const datosUsuario = await traerDatosUsuarioPorID(id, tipoUsuario);
-        //? Se traen todos los tipos de usuario disponibles
-        const jsonTipoUsuario = await fetch(`../controller/controllerDatosTipoUsuario.php`);
-        const datosTipoUsuario = await jsonTipoUsuario.json();
+        const datosUsuario = await traerDatosAdminPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombreUsuario);
+        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario.nombre_administrador);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Apellido
         const apellidoDiv = crearDivForm();
         const apellidoLabel = crearLabelForm('apellidoUsuario', 'Apellido');
-        const apellidoInput = crearInputForm('apellidoUsuario', 'text', datosUsuario[0].apellidoUsuario);
+        const apellidoInput = crearInputForm('apellidoUsuario', 'text', datosUsuario.apellido_administrador);
         apellidoDiv.append(apellidoLabel);
         apellidoDiv.append(apellidoInput);
         //? Email
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Correo');
-        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].emailUsuario);
+        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario.correo_administrador);
         emailDiv.append(emailLabel);
         emailDiv.append(emailInput);
         //? Password
@@ -404,26 +400,11 @@ async function contenidoUsuarioEditar(id, tipoUsuario) {
         const passInput = crearInputForm('passUsuario', 'password', '');
         passDiv.append(passLabel);
         passDiv.append(passInput);
-        //? Tipo Usuario
-        const selectDiv = crearDivForm();
-        const select = crearSelectForm('tipoUsuario');
-        datosTipoUsuario.forEach((tipoUsuario) => {
-            if (tipoUsuario.idTipoUsuario == datosUsuario[0].fkTipoUsuario) {
-                const optionSelected = crearOptionForm(tipoUsuario.idTipoUsuario, tipoUsuario.tipoUsuario, true);
-                select.append(optionSelected);
-            } else {
-                const option = crearOptionForm(tipoUsuario.idTipoUsuario, tipoUsuario.tipoUsuario, false);
-                select.append(option);
-            }
-        });
-        selectDiv.append(select);
         //? Asignacion final Form
-
         form.append(nombreDiv);
         form.append(apellidoDiv);
         form.append(emailDiv);
         form.append(passDiv);
-        form.append(selectDiv);
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -591,7 +572,7 @@ async function sweetAdminInsertar() {
                     return false;
                 }
                 //? Verificacion de Email del Usuario
-                let boolEmail = await verificarEmailAdmin(email,'Administrador');
+                let boolEmail = await verificarEmailAdmin(email);
                 if (boolEmail == false) {
                     Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
                     return false;
@@ -649,12 +630,12 @@ async function sweetAdminInsertar() {
 
 // #region //* Sweet Admin Editar
 //TODO Inicio SweetAlert Usuario Editar
-async function sweetUsuarioEditar(id, tipoUsuario) {
+async function sweetAdminEditar(id) {
     try {
         Swal.fire({
             title: 'Editar Usuario', //? Titulo Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoUsuarioEditar(id), //? Contenido HTML
+            html: await contenidoAdminEditar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -663,7 +644,7 @@ async function sweetUsuarioEditar(id, tipoUsuario) {
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
                 //? Se traen datos de usuario por ID
-                const datosUsuario = await traerDatosUsuarioPorID(id, tipoUsuario);
+                const datosUsuario = await traerDatosAdminPorID(id);
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuario').value.trim();
                 const apellido = document.querySelector('#apellidoUsuario').value.trim();
@@ -676,22 +657,21 @@ async function sweetUsuarioEditar(id, tipoUsuario) {
                     return false;
                 }
                 let pass = document.querySelector('#passUsuario').value.trim();
-                const tipoUsuario = document.querySelector('#tipoUsuario').value.trim();
                 //? Se verifica si se escribio una password nueva o se dejo vacio
                 let bool = false;
                 if (pass == null || pass == '') {
                     //? Si se dejo vacio se asigna la contraseña anterior
-                    pass = datosUsuario[0].passUsuario;
+                    pass = datosUsuario.pass_administrador;
                     bool = true;
                 }
                 //? Verificar que los campos esten llenos
-                if (!nombre || !apellido || !email || !pass || !tipoUsuario) {
+                if (!nombre || !apellido || !email || !pass) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
                 //? Verificacion de Email del Usuario
-                if (email != datosUsuario[0].emailUsuario) {
-                    let boolEmail = await verificarEmail(email);
+                if (email != datosUsuario.correo_administrador) {
+                    let boolEmail = await verificarEmailAdmin(email);
                     if (boolEmail == false) {
                         Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
                         return false;
@@ -703,7 +683,6 @@ async function sweetUsuarioEditar(id, tipoUsuario) {
                     apellido,
                     email,
                     pass,
-                    tipoUsuario,
                     bool,
                     id,
                 };
@@ -719,11 +698,10 @@ async function sweetUsuarioEditar(id, tipoUsuario) {
                 formData.append('apellido', datos.apellido);
                 formData.append('email', datos.email);
                 formData.append('pass', datos.pass);
-                formData.append('tipoUsuario', datos.tipoUsuario);
                 formData.append('bool', datos.bool);
                 formData.append('id', datos.id);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/controllerUsuarioEditar.php', {
+                const json = await fetch('../controller/administradores/controllerAdminEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
