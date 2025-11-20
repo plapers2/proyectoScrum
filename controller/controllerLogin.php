@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //* Exito
                 switch ($tipo) {
                     case 'Administrador':
-                        header("Location: ../dist/instructores.php");
+                        header("Location: ../dist/administradores.php");
                         break;
                     case 'Instructor':
                         header("Location: ../dist/instructores.php");

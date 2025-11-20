@@ -57,9 +57,6 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
-        <a class="navbar-brand ps-3" href="<?php echo ($_SESSION['tipoUsuario'] != "Administrador") ? "libros.php" :  "dashboard.php" ?>">
-            <?php echo $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
-        </a>
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -75,7 +72,6 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['idUsuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
@@ -89,46 +85,58 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <?php
-                        if ($_SESSION['tipoUsuario'] === "Administrador") {
-                            echo '<div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link" href="dashboard.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                            Panel de Administracion
-                        </a>';
-                        };
-                        ?>
-                        <div class="sb-sidenav-menu-heading">Libros</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Gestión de Libros
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="libros.php">Búsqueda de Libros</a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReservas"
-                                    aria-expanded="true" aria-controls="collapseReservas">
-                                    Reservas
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
+                        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
+                        <!-- Editar Perfil -->
+                        <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
+                            <a data-id="<?= $_SESSION["idUsuario"]; ?>"
+                                data-nombre="<?= $_SESSION["nombreUsuario"]; ?>"
+                                data-apellido="<?= $_SESSION["apellidoUsuario"]; ?>"
+                                data-correo="<?= $_SESSION["emailUsuario"]; ?>"
+                                class="btn nav-link collapsed" onclick="editarPerfil(this)">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
+                                Editar Perfil
+                            </a>
+                        <?php endif; ?>
 
-                                <div class="collapse" id="collapseReservas" data-bs-parent="#collapseLibros">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="reservasPendientes.php">Reservas Pendientes</a>
-                                        <a class="nav-link" href="reservasHistorial.php">Historial de Reservas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="prestamos.php">Préstamos</a>
-                            </nav>
-                        </div>
+                        <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                            <a class="nav-link collapsed" href="administradores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                Administradores
+                            </a>
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
+                            </a>
+                            <a class="nav-link collapsed" href="aprendices.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
+                                Aprendices
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Administrador"
+                            || $_SESSION["tipoUsuario"] == "Instructor"
+                        ): ?>
+                            <a class="nav-link collapsed" href="instructores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                Instructores
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Instructor"
+                            || $_SESSION["tipoUsuario"] == "Aprendiz"
+                        ): ?>
+                            <a class="nav-link collapsed" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Trabajos
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logueado como:</div>
-                    <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['tipoUsuario'] . "</p>"; ?>
                 </div>
+                          
             </nav>
         </div>
         <!-- Contenido principal -->
@@ -139,8 +147,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Panel de Administracion</li>
                     </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Insertar Usuario</button>
-                    <button class="btn btn-success mb-4" id="generarArchivos"><i class="bi bi-folder-plus"></i> Generar Archivos</button>
+                    <button class="btn btn-success mb-4" id="administradorInsertar"><i class="bi bi-person-add"></i> Crear nuevo Administrador</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
@@ -174,6 +181,15 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                                             <td><?php echo $filaUsuario['nombre_administrador']; ?></td>
                                             <td><?php echo $filaUsuario['apellido_administrador']; ?></td>
                                             <td><?php echo $filaUsuario['correo_administrador']; ?></td>
+                                            <td>
+                                                <button class="btn btn-warning mb-4" id="usuarioInsertar" onclick="sweetAdminEditar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
+                                                <?php if ($filaUsuario['estado_administrador'] == 'Activo') { ?>
+                                                    <button class="btn btn-danger mb-4" id="administradorDesactivar" onclick="sweetAdminDesactivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-info mb-4" id="administradorActivar" onclick="sweetAdminActivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                <?php } ?>
+
+                                            </td>
                                         </tr>
                                     <?php
                                     } ?>
@@ -181,6 +197,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                             </table>
                         </div>
                     </div>
+                    <button class="btn btn-success mb-4" id="instructorInsertar"><i class="bi bi-person-add"></i> Crear nuevo Instructor</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
@@ -213,6 +230,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                                             <td><?php echo $filaInstructor['nombre_instructor']; ?></td>
                                             <td><?php echo $filaInstructor['apellido_instructor']; ?></td>
                                             <td><?php echo $filaInstructor['correo_instructor']; ?></td>
+                                            <td></td>
                                         </tr>
                                     <?php }
                                     ?>
@@ -220,6 +238,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                             </table>
                         </div>
                     </div>
+                    <button class="btn btn-success mb-4" id="aprendizInsertar"><i class="bi bi-person-add"></i> Crear nuevo Aprendiz</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
@@ -252,6 +271,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                                             <td><?php echo $filaAprendices['nombre_aprendiz']; ?></td>
                                             <td><?php echo $filaAprendices['apellido_aprendiz']; ?></td>
                                             <td><?php echo $filaAprendices['correo_aprendiz']; ?></td>
+                                            <td></td>
                                         </tr>
                                     <?php
                                     }
@@ -282,6 +302,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables/datatables-simple-demo.js"></script>
+    <script src="js/administradores/sweetAlertAdmin.js"></script>
     <script src="js/sweetAlerts.js"></script>
 </body>
 
