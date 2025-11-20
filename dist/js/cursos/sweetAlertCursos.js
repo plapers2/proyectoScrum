@@ -5,18 +5,18 @@
 //! Eventos de Botones
 //! /////////////////////////////////////////////////////////
 
-// #region //* Admin Insertar
-//TODO Inicio Admin Insertar
+// #region //* Curso Insertar
+//TODO Inicio Curso Insertar
 //? Se capturan todos los botones en un arreglo (creado por defecto)
-let adminInsertar = document.querySelectorAll('#administradorInsertar');
-adminInsertar.forEach((element) => {
+let cursoInsertar = document.querySelectorAll('#cursoInsertar');
+cursoInsertar.forEach((element) => {
     //? Se añade el evento click a cada boton capturado
     element.addEventListener('click', () => {
         //? Se llama el SweetAlert correspondiente
-        sweetAdminInsertar();
+        sweetCursoInsertar();
     });
 });
-//TODO Fin Admin Insertar
+//TODO Fin Curso Insertar
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -30,42 +30,15 @@ adminInsertar.forEach((element) => {
 //! Funciones Generales
 //! /////////////////////////////////////////////////////////
 
-// #region //* Verificar Email Admin
-//TODO Inicio Funcion verificarEmailAdmin
-async function verificarEmailAdmin(email) {
-    try {
-        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('tipoUsuario', 'Administrador');
-        //? Solicitud de datos a controller
-        const response = await fetch('../controller/controllerVerifyEmail.php', {
-            method: 'POST',
-            body: formData,
-        });
-        //? Conversion a JSON valido
-        const resultadoEmailVerify = await response.json();
-        //? Retorno de datos
-        console.log(resultadoEmailVerify);
-        return resultadoEmailVerify;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Funcion verificarEmailAdmin
-// #endregion
-
-// #region //* Traer Datos Admin (por id)
-//TODO Inicio Funcion Traer Datos Admin (por id)
-async function traerDatosAdminPorID(id) {
+// #region //* Traer Datos Curso (por id)
+//TODO Inicio Funcion Traer Datos Curso (por id)
+async function traerDatosCursoPorID(id) {
     try {
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../controller/administradores/controllerDatosAdminPorID.php`, {
+        const json = await fetch(`../controller/cursos/controllerDatosCursoPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -80,6 +53,58 @@ async function traerDatosAdminPorID(id) {
     }
 }
 //TODO Fin Funcion Traer Datos Admin (por id)
+// #endregion
+
+// #region //* Traer Datos Curso Aprendices (por id)
+//TODO Inicio Funcion Traer Datos Curso Aprendices (por id)
+async function traerDatosCursoAprendicesPorID(id) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('id', id);
+        console.log(id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/cursos/controllerDatosCursoAprendicesPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        console.log(datos);
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Datos Curso Aprendices (por id)
+// #endregion
+
+// #region //* Traer Datos Curso Instructores (por id)
+//TODO Inicio Funcion Traer Datos Curso Instructores (por id)
+async function traerDatosCursoInstructoresPorID(id) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('id', id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/cursos/controllerDatosCursoInstructoresPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Traer Datos Curso Instructores (por id)
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -322,41 +347,27 @@ function crearLi(text) {
 //! Contenidos de HTML para los SweetAlert
 //! /////////////////////////////////////////////////////////
 
-// #region //* Contenido Admin Insertar
-//TODO Inicio Contenido Admin Insertar
-async function contenidoAdminInsertar() {
+// #region //* Contenido Curso Insertar
+//TODO Inicio Contenido Curso Insertar
+async function contenidoCursoInsertar() {
     try {
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
         const nombreDiv = crearDivForm();
-        const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', '');
+        const nombreLabel = crearLabelForm('nombreCurso', 'Nombre');
+        const nombreInput = crearInputForm('nombreCurso', 'text', '');
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
-        //? Apellido
-        const apellidoDiv = crearDivForm();
-        const apellidoLabel = crearLabelForm('apellidoUsuario', 'Apellido');
-        const apellidoInput = crearInputForm('apellidoUsuario', 'text', '');
-        apellidoDiv.append(apellidoLabel);
-        apellidoDiv.append(apellidoInput);
-        //? Email
-        const emailDiv = crearDivForm();
-        const emailLabel = crearLabelForm('emailUsuario', 'Email');
-        const emailInput = crearInputForm('emailUsuario', 'email', '');
-        emailDiv.append(emailLabel);
-        emailDiv.append(emailInput);
-        //? Pass
-        const passDiv = crearDivForm();
-        const passLabel = crearLabelForm('passUsuario', 'Contraseña');
-        const passInput = crearInputForm('passUsuario', 'password', '');
-        passDiv.append(passLabel);
-        passDiv.append(passInput);
+        //? Descripcion
+        const descripcionDiv = crearDivForm();
+        const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
+        const descripcionInput = crearInputForm('descripcionCurso', 'text', '');
+        descripcionDiv.append(descripcionLabel);
+        descripcionDiv.append(descripcionInput);
         //? Asignacion final Form
         form.append(nombreDiv);
-        form.append(apellidoDiv);
-        form.append(emailDiv);
-        form.append(passDiv);
+        form.append(descripcionDiv);
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -365,46 +376,32 @@ async function contenidoAdminInsertar() {
         return false;
     }
 }
-//TODO Fin Contenido Admin Insertar
+//TODO Fin Contenido Curso Insertar
 // #endregion
 
-// #region //* Contenido Usuario Editar
-//TODO Inicio Contenido Usuario Editar
-async function contenidoAdminEditar(id) {
+// #region //* Contenido Curso Editar
+//TODO Inicio Contenido Curso Editar
+async function contenidoCursoEditar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const datosUsuario = await traerDatosAdminPorID(id);
+        const datosCurso = await traerDatosCursoPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
         const nombreDiv = crearDivForm();
-        const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombre_administrador);
+        const nombreLabel = crearLabelForm('nombreCurso', 'Nombre');
+        const nombreInput = crearInputForm('nombreCurso', 'text', datosCurso.nombre_curso);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
-        //? Apellido
-        const apellidoDiv = crearDivForm();
-        const apellidoLabel = crearLabelForm('apellidoUsuario', 'Apellido');
-        const apellidoInput = crearInputForm('apellidoUsuario', 'text', datosUsuario[0].apellido_administrador);
-        apellidoDiv.append(apellidoLabel);
-        apellidoDiv.append(apellidoInput);
-        //? Email
-        const emailDiv = crearDivForm();
-        const emailLabel = crearLabelForm('emailUsuario', 'Correo');
-        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].correo_administrador);
-        emailDiv.append(emailLabel);
-        emailDiv.append(emailInput);
-        //? Password
-        const passDiv = crearDivForm();
-        const passLabel = crearLabelForm('passUsuario', 'Contraseña');
-        const passInput = crearInputForm('passUsuario', 'password', '');
-        passDiv.append(passLabel);
-        passDiv.append(passInput);
+        //? Descripcion
+        const descripcionDiv = crearDivForm();
+        const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
+        const descripcionInput = crearInputForm('descripcionCurso', 'text', datosCurso.descripcion_curso);
+        descripcionDiv.append(descripcionLabel);
+        descripcionDiv.append(descripcionInput);
         //? Asignacion final Form
         form.append(nombreDiv);
-        form.append(apellidoDiv);
-        form.append(emailDiv);
-        form.append(passDiv);
+        form.append(descripcionDiv);
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -413,20 +410,20 @@ async function contenidoAdminEditar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Usuario Editar
+//TODO Fin Contenido Curso Editar
 // #endregion
 
-// #region //* Contenido Admin Activar
-//TODO Inicio Contenido Admin Activar
-async function contenidoAdminActivar(id) {
+// #region //* Contenido Curso Activar
+//TODO Inicio Contenido Curso Activar
+async function contenidoCursoActivar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const admin = await traerDatosAdminPorID(id);
+        const curso = await traerDatosCursoPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el Administrador ${admin[0].nombre_administrador} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el Curso ${curso.nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -438,20 +435,20 @@ async function contenidoAdminActivar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Admin Activar
+//TODO Fin Contenido Curso Activar
 // #endregion
 
-// #region //* Contenido Admin Desctivar
-//TODO Inicio Contenido Admin Desactivar
-async function contenidoAdminDesctivar(id) {
+// #region //* Contenido Curso Desctivar
+//TODO Inicio Contenido Curso Desactivar
+async function contenidoCursoDesctivar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const admin = await traerDatosAdminPorID(id);
+        const curso = await traerDatosCursoPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el Administrador ${admin[0].nombre_administrador} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el Curso ${curso.nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -463,69 +460,59 @@ async function contenidoAdminDesctivar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Admin Desactivar
+//TODO Fin Contenido Curso Desactivar
 // #endregion
 
-// #region //* Contenido Politica & Privacidad
-//TODO Inicio Contenido Politica Privacidad
-async function contenidoPoliticaPrivacidad() {
+// #region //* Contenido Curso Ver Aprendices
+//TODO Inicio Contenido Curso Ver Aprendices
+async function contenidoCursoVerAprendices(id) {
     try {
-        //? Texto a mostrar
-        const text = `
-        En BibliotecaADSO, respetamos tu privacidad.
-        Los datos personales que puedas proporcionar (como nombre o correo electrónico) se usarán únicamente para responder consultas o mejorar el servicio.
-        Usamos cookies solo para fines estadísticos y de personalización.
-        No compartimos tu información con terceros.
-        Puedes solicitar en cualquier momento la eliminación o modificación de tus datos escribiendo a contacto@bibliotecaadso.com
-        Última actualización: 28 de octubre de 2025.
-        `;
-        //? Inicio Formulario
-        const form = crearForm();
-        //? Parrafo (texto)
-        const parrafoDiv = crearDivForm();
-        const parrafo = crearParrafo(text);
-        parrafoDiv.append(parrafo);
-        //? Asignacion final Form
-        form.append(parrafoDiv);
-        //? Retorno de HTML
-        return form;
+        //? Se traen datos de usuario por ID
+        const aprendices = await traerDatosCursoAprendicesPorID(id);
+        const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
+        if (aprendices.length > 0) {
+            aprendices.forEach((element) => {
+                const li = crearLi(element.nombre_aprendiz + ' ' + element.apellido_aprendiz);
+                div.append(li);
+            });
+        } else {
+            const li = crearLi('No hay ningun aprendiz asociado a este curso!');
+            div.append(li);
+        }
+        return div;
     } catch (e) {
         //? Control de errores
         console.log(e);
         return false;
     }
 }
-//TODO Fin Contenido Politica Privacidad
+//TODO Fin Contenido Curso Ver Aprendices
 // #endregion
 
-// #region //* Contenido Terminos & Condiciones
-//TODO Inicio Contenido Terminos & Condiciones
-async function contenidoTerminosCondiciones() {
+// #region //* Contenido Curso Ver Instructores
+//TODO Inicio Contenido Curso Ver Instructores
+async function contenidoCursoVerInstructores(id) {
     try {
-        //? Texto a mostrar
-        const text = `El acceso y uso de BibliotecaADSO implica la aceptación de estos términos. 
-        El contenido de esta página es únicamente con fines informativos y educativos.
-        No se permite la reproducción o distribución del material sin autorización del autor o fuente original.
-        No garantizamos la disponibilidad continua del sitio ni nos hacemos responsables por el uso indebido del contenido.
-        Estos términos pueden modificarse sin previo aviso.
-        Ley aplicable: Colombia`;
-        //? Inicio Formulario
-        const form = crearForm();
-        //? Parrafo (texto)
-        const parrafoDiv = crearDivForm();
-        const parrafo = crearParrafo(text);
-        parrafoDiv.append(parrafo);
-        //? Asignacion final Form
-        form.append(parrafoDiv);
-        //? Retorno de HTML
-        return form;
+        //? Se traen datos de usuario por ID
+        const aprendices = await traerDatosCursoInstructoresPorID(id);
+        const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
+        if (aprendices.length > 0) {
+            aprendices.forEach((element) => {
+                const li = crearLi(element.nombre_aprendiz + ' ' + element.apellido_aprendiz);
+                div.append(li);
+            });
+        } else {
+            const li = crearLi('No hay ningun instructor asociado a este curso!');
+            div.append(li);
+        }
+        return div;
     } catch (e) {
         //? Control de errores
         console.log(e);
         return false;
     }
 }
-//TODO Fin Contenido Terminos & Condiciones
+//TODO Fin Contenido Curso Ver Aprendices
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -539,14 +526,14 @@ async function contenidoTerminosCondiciones() {
 //! Funciones SweetAlert (SweetAlert2 Principales)
 //! /////////////////////////////////////////////////////////
 
-// #region //* Sweet Admin Insertar
-//TODO Inicio SweetAlert Admin Insertar
-async function sweetAdminInsertar() {
+// #region //* Sweet Curso Insertar
+//TODO Inicio SweetAlert Curso Insertar
+async function sweetCursoInsertar() {
     try {
         Swal.fire({
-            title: 'Crear Administrador', //? Titulo Modal
+            title: 'Crear Curso', //? Titulo Modal
             showLoaderOnConfirm: true, //? Muestra loader mientras espera el preConfirm
-            html: await contenidoAdminInsertar(), //? Contenido HTML
+            html: await contenidoCursoInsertar(), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -555,34 +542,17 @@ async function sweetAdminInsertar() {
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
-                const nombre = document.querySelector('#nombreUsuario').value.trim();
-                const apellido = document.querySelector('#apellidoUsuario').value.trim();
-                const email = document.querySelector('#emailUsuario').value.trim();
-                //* Validar formato de correo antes de continuar
-                const emailValue = email;
-                const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!regexCorreo.test(emailValue)) {
-                    Swal.showValidationMessage('Formato de correo no válido');
-                    return false;
-                }
-                const pass = document.querySelector('#passUsuario').value.trim();
+                const nombre = document.querySelector('#nombreCurso').value.trim();
+                const descripcion = document.querySelector('#descripcionCurso').value.trim();
                 //? Verificar que los campos esten llenos
-                if (!nombre || !apellido || !email || !pass) {
+                if (!nombre || !descripcion) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
-                    return false;
-                }
-                //? Verificacion de Email del Usuario
-                let boolEmail = await verificarEmailAdmin(email);
-                if (boolEmail == false) {
-                    Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
                     return false;
                 }
                 //? Retornar valores finales
                 return {
                     nombre,
-                    apellido,
-                    email,
-                    pass,
+                    descripcion,
                 };
             },
         }).then(async (result) => {
@@ -593,11 +563,9 @@ async function sweetAdminInsertar() {
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
                 formData.append('nombre', datos.nombre);
-                formData.append('apellido', datos.apellido);
-                formData.append('email', datos.email);
-                formData.append('pass', datos.pass);
+                formData.append('descripcion', datos.descripcion);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/administradores/controllerAdminInsertar.php', {
+                const json = await fetch('../controller/cursos/controllerCursoInsertar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -625,17 +593,17 @@ async function sweetAdminInsertar() {
         return false;
     }
 }
-//TODO Fin SweetAlert Usuario Insertar
+//TODO Fin SweetAlert Curso Insertar
 // #endregion
 
-// #region //* Sweet Admin Editar
-//TODO Inicio SweetAlert Usuario Editar
-async function sweetAdminEditar(id) {
+// #region //* Sweet Curso Editar
+//TODO Inicio SweetAlert Curso Editar
+async function sweetCursoEditar(id) {
     try {
         Swal.fire({
-            title: 'Editar Administrador', //? Titulo Modal
+            title: 'Editar Curso', //? Titulo Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoAdminEditar(id), //? Contenido HTML
+            html: await contenidoCursoEditar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -643,48 +611,19 @@ async function sweetAdminEditar(id) {
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
-                //? Se traen datos de usuario por ID
-                const datosUsuario = await traerDatosAdminPorID(id);
                 //? Se capturan los datos del formulario
-                const nombre = document.querySelector('#nombreUsuario').value.trim();
-                const apellido = document.querySelector('#apellidoUsuario').value.trim();
-                const email = document.querySelector('#emailUsuario').value.trim();
-                //* Validar formato de correo antes de continuar
-                const emailValue = email;
-                const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!regexCorreo.test(emailValue)) {
-                    Swal.showValidationMessage('Formato de correo no válido');
-                    return false;
-                }
-                let pass = document.querySelector('#passUsuario').value.trim();
-                //? Se verifica si se escribio una password nueva o se dejo vacio
-                let bool = false;
-                if (pass == null || pass == '') {
-                    //? Si se dejo vacio se asigna la contraseña anterior
-                    pass = datosUsuario[0].pass_administrador;
-                    bool = true;
-                }
+                const nombre = document.querySelector('#nombreCurso').value.trim();
+                const descripcion = document.querySelector('#descripcionCurso').value.trim();
                 //? Verificar que los campos esten llenos
-                if (!nombre || !apellido || !email || !pass) {
+                if (!nombre || !descripcion) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
-                //? Verificacion de Email del Usuario
-                if (email != datosUsuario[0].correo_administrador) {
-                    let boolEmail = await verificarEmailAdmin(email);
-                    if (boolEmail == false) {
-                        Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
-                        return false;
-                    }
-                }
                 //? Retornar valores finales
                 return {
-                    nombre,
-                    apellido,
-                    email,
-                    pass,
-                    bool,
                     id,
+                    nombre,
+                    descripcion,
                 };
             },
         }).then(async (result) => {
@@ -694,14 +633,11 @@ async function sweetAdminEditar(id) {
                 const datos = result.value;
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
-                formData.append('nombre', datos.nombre);
-                formData.append('apellido', datos.apellido);
-                formData.append('email', datos.email);
-                formData.append('pass', datos.pass);
-                formData.append('bool', datos.bool);
                 formData.append('id', datos.id);
+                formData.append('nombre', datos.nombre);
+                formData.append('descripcion', datos.descripcion);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/administradores/controllerAdminEditar.php', {
+                const json = await fetch('../controller/cursos/controllerCursoEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -729,18 +665,18 @@ async function sweetAdminEditar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Usuario Editar
+//TODO Fin SweetAlert Curso Editar
 // #endregion
 
-// #region //* Sweet Admin Activar
-//TODO Inicio SweetAlert Admin Activar
-async function sweetAdminActivar(id) {
+// #region //* Sweet Curso Activar
+//TODO Inicio SweetAlert Curso Activar
+async function sweetCursoActivar(id) {
     try {
         Swal.fire({
-            title: 'Activar Administrador', //? Titulo Modal
+            title: 'Activar Curso', //? Titulo Modal
             icon: 'question', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoAdminActivar(id), //? Contenido HTML
+            html: await contenidoCursoActivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -760,7 +696,7 @@ async function sweetAdminActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/administradores/controllerAdminActivar.php', {
+                const json = await fetch('../controller/cursos/controllerCursoActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -788,18 +724,18 @@ async function sweetAdminActivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Admin Activar
+//TODO Fin SweetAlert Curso Activar
 // #endregion
 
-// #region //* Sweet Admin Desactivar
-//TODO Inicio SweetAlert Admin Desactivar
-async function sweetAdminDesactivar(id) {
+// #region //* Sweet Curso Desactivar
+//TODO Inicio SweetAlert Curso Desactivar
+async function sweetCursoDesactivar(id) {
     try {
         Swal.fire({
-            title: 'Desactivar Administrador', //? Titulo Modal
+            title: 'Desactivar Curso', //? Titulo Modal
             icon: 'warning', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoAdminDesctivar(id), //? Contenido HTML
+            html: await contenidoCursoDesctivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -819,7 +755,7 @@ async function sweetAdminDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/administradores/controllerAdminDesactivar.php', {
+                const json = await fetch('../controller/cursos/controllerCursoDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -847,19 +783,20 @@ async function sweetAdminDesactivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Admin Desactivar
+//TODO Fin SweetAlert Curso Desactivar
 // #endregion
 
-// #region //* Sweet Politica & Privacidad
-//TODO Inicio SweetAlert Activar Usuario
-async function sweetPoliticaPrivacidad() {
+// #region //* Sweet Curso Ver Aprendices
+//TODO Inicio SweetAlert Curso Ver Aprendices
+async function sweetCursoVerAprendices(id) {
     try {
         Swal.fire({
-            title: 'Politica & Privacidad', //? Titulo Modal
-            html: await contenidoPoliticaPrivacidad(), //? Contenido HTML
-            confirmButtonText: 'Aceptar', //? Texto boton confirmar
-            focusConfirm: false, //? Desactivar focus al boton crear
-            confirmButtonColor: '#007bff', //? Color boton confirmar
+            title: 'Aprendices Asociados',
+            html: await contenidoCursoVerAprendices(id),
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            cancelButtonColor: '#6c757d',
         });
     } catch (e) {
         //? Control de errores
@@ -867,19 +804,20 @@ async function sweetPoliticaPrivacidad() {
         return false;
     }
 }
-//TODO Fin SweetAlert Activar Usuario
+//TODO Fin SweetAlert Curso Ver Aprendices
 // #endregion
 
-// #region //* Sweet Terminos & Condiciones
-//TODO Inicio SweetAlert Activar Usuario
-async function sweetTerminosCondiciones() {
+// #region //* Sweet Curso Ver Instructores
+//TODO Inicio SweetAlert Curso Ver Instructores
+async function sweetCursoVerInstructores(id) {
     try {
         Swal.fire({
-            title: 'Terminos & Condiciones', //? Titulo Modal
-            html: await contenidoTerminosCondiciones(), //? Contenido HTML
-            confirmButtonText: 'Aceptar', //? Texto boton confirmar
-            focusConfirm: false, //? Desactivar focus al boton crear
-            confirmButtonColor: '#007bff', //? Color boton confirmar
+            title: 'Instructores Asociados',
+            html: await contenidoCursoVerInstructores(id),
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
+            cancelButtonColor: '#6c757d',
         });
     } catch (e) {
         //? Control de errores
@@ -887,8 +825,7 @@ async function sweetTerminosCondiciones() {
         return false;
     }
 }
-
-//TODO Fin SweetAlert Activar Usuario
+//TODO Fin SweetAlert Curso Ver Instructores
 // #endregion
 
 //! /////////////////////////////////////////////////////////

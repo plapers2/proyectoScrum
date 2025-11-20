@@ -10,14 +10,14 @@ $mysql->conectar();
 $id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
 
 try {
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM administradores WHERE id_administrador = $id;");
+    $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE cursos_id_curso = $id;");
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al traer datos de administrador por ID', 'error' => $th]);
+    echo json_encode(['success' => false, 'message' => 'Error al traer datos de aprendices asociados a curso por ID', 'error' => $th]);
 }
 $datos = [];
 while ($row = mysqli_fetch_assoc($resultado)) {
-    $row['id_administrador'] = (int)$row['id_administrador'];
+    $row['id_aprendiz'] = (int)$row['id_aprendiz'];
     $datos[] = $row;
 }
 header('Content-Type: application/json');
