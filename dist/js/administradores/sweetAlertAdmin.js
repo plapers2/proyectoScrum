@@ -416,17 +416,17 @@ async function contenidoAdminEditar(id) {
 //TODO Fin Contenido Usuario Editar
 // #endregion
 
-// #region //* Contenido Usuario Activar
-//TODO Inicio Contenido Usuario Activar
-async function contenidoUsuarioActivar(id, tipoUsuario) {
+// #region //* Contenido Admin Activar
+//TODO Inicio Contenido Admin Activar
+async function contenidoAdminActivar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const usuario = await traerDatosUsuarioPorID(id, tipoUsuario);
+        const admin = await traerDatosAdminPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el Administrador ${admin.nombre_administrador} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -438,20 +438,20 @@ async function contenidoUsuarioActivar(id, tipoUsuario) {
         return false;
     }
 }
-//TODO Fin Contenido Usuario Activar
+//TODO Fin Contenido Admin Activar
 // #endregion
 
-// #region //* Contenido Usuario Desctivar
-//TODO Inicio Contenido Usuario Desactivar
-async function contenidoUsuarioDesctivar(id, tipoUsuario) {
+// #region //* Contenido Admin Desctivar
+//TODO Inicio Contenido Admin Desactivar
+async function contenidoAdminDesctivar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const usuario = await traerDatosUsuarioPorID(id, tipoUsuario);
+        const admin = await traerDatosAdminPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el Administrador ${admin.nombre_administrador} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -463,7 +463,7 @@ async function contenidoUsuarioDesctivar(id, tipoUsuario) {
         return false;
     }
 }
-//TODO Fin Contenido Usuario Desactivar
+//TODO Fin Contenido Admin Desactivar
 // #endregion
 
 // #region //* Contenido Politica & Privacidad
@@ -544,7 +544,7 @@ async function contenidoTerminosCondiciones() {
 async function sweetAdminInsertar() {
     try {
         Swal.fire({
-            title: 'Crear Nuevo Administrador', //? Titulo Modal
+            title: 'Crear Administrador', //? Titulo Modal
             showLoaderOnConfirm: true, //? Muestra loader mientras espera el preConfirm
             html: await contenidoAdminInsertar(), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
@@ -633,7 +633,7 @@ async function sweetAdminInsertar() {
 async function sweetAdminEditar(id) {
     try {
         Swal.fire({
-            title: 'Editar Usuario', //? Titulo Modal
+            title: 'Editar Administrador', //? Titulo Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
             html: await contenidoAdminEditar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
@@ -733,14 +733,14 @@ async function sweetAdminEditar(id) {
 // #endregion
 
 // #region //* Sweet Admin Activar
-//TODO Inicio SweetAlert Activar Usuario
-async function sweetUsuarioActivar(id) {
+//TODO Inicio SweetAlert Admin Activar
+async function sweetAdminActivar(id) {
     try {
         Swal.fire({
-            title: 'Activar Usuario', //? Titulo Modal
+            title: 'Activar Administrador', //? Titulo Modal
             icon: 'question', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoUsuarioActivar(id), //? Contenido HTML
+            html: await contenidoAdminActivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -760,7 +760,7 @@ async function sweetUsuarioActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/controllerUsuarioActivar.php', {
+                const json = await fetch('../controller/administradores/controllerAdminActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -788,18 +788,18 @@ async function sweetUsuarioActivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Activar Usuario
+//TODO Fin SweetAlert Admin Activar
 // #endregion
 
 // #region //* Sweet Admin Desactivar
-//TODO Inicio SweetAlert Desactivar Usuario
-async function sweetUsuarioDesactivar(id) {
+//TODO Inicio SweetAlert Admin Desactivar
+async function sweetAdminDesactivar(id) {
     try {
         Swal.fire({
-            title: 'Desactivar Usuario', //? Titulo Modal
+            title: 'Desactivar Administrador', //? Titulo Modal
             icon: 'warning', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoUsuarioDesctivar(id), //? Contenido HTML
+            html: await contenidoAdminDesctivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -819,7 +819,7 @@ async function sweetUsuarioDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../controller/controllerUsuarioDesactivar.php', {
+                const json = await fetch('../controller/administradores/controllerAdminDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -847,7 +847,7 @@ async function sweetUsuarioDesactivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Desactivar Usuario
+//TODO Fin SweetAlert Admin Desactivar
 // #endregion
 
 // #region //* Sweet Politica & Privacidad
