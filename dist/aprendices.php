@@ -10,16 +10,18 @@ if (!isset($_SESSION["idUsuario"]) || empty($_SESSION["idUsuario"])) {
     exit;
 }
 
+// valor por defecto para evitar errores
+$id = isset($_SESSION["idUsuario"]) ? $_SESSION["idUsuario"] : 0;
+
 $resultado;
 
-// ADMINISTRADOR → ve todos los aprendices
+// administrador
 if ($_SESSION["tipoUsuario"] == "Administrador") {
     $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE estado_aprendiz = 'Activo'");
 }
 
-// APRENDIZ → ve solo su propio perfIl
+// aprendiz
 if ($_SESSION["tipoUsuario"] == "Aprendiz") {
-    $id = $_SESSION["idUsuario"];
     $resultado = $mysql->efectuarConsulta("SELECT * FROM aprendices WHERE id_aprendiz = $id");
 }
 
@@ -27,6 +29,25 @@ $aprendices = [];
 while ($valor = mysqli_fetch_assoc($resultado)) {
     $aprendices[] = $valor;
 }
+
+$resultadoTrabajos = $mysql->efectuarConsulta("
+    SELECT 
+        trabajos.*, 
+        instructores.nombre_instructor,
+        aprendices.nombre_aprendiz
+    FROM trabajos
+    LEFT JOIN instructores 
+        ON trabajos.instructores_id_instructor = instructores.id_instructor
+    LEFT JOIN aprendices 
+        ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+    WHERE trabajos.aprendices_id_aprendiz = $id
+");
+
+$trabajos = [];
+while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
+    $trabajos[] = $fila;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,6 +58,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Aprendices - Biblioteca ADSO</title>
 
+    <!-- Librerias -->
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -46,7 +68,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
 
 <body class="sb-nav-fixed">
 
-    <!-- NAV -->
+    <!-- Barra de navegacion -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <button class="btn btn-link btn-sm" id="sidebarToggle"><i class="fas fa-bars"></i></button>
 
@@ -59,7 +81,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" id="btn_cerrar_sesion"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item text-danger" id="btn_cerrar_sesion"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesion</a></li>
                 </ul>
             </li>
         </ul>
@@ -67,16 +89,16 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
 
     <div id="layoutSidenav">
 
-        <!-- SIDEBAR -->
+        <!-- Sidebar -->
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark">
 
                 <div class="sb-sidenav-menu">
                     <div class="nav">
 
-                        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
+                        <div class="sb-sidenav-menu-heading">Funciones</div>
 
-                        <!-- EDICIÓN DE PERFIL -->
+                        <!-- Edicion de perfil -->
                         <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                             <a class="btn nav-link collapsed"
                                 data-id="<?= $_SESSION["idUsuario"]; ?>"
@@ -89,7 +111,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                             </a>
                         <?php endif; ?>
 
-                        <!-- ADMINISTRADOR -->
+                        <!-- Opciones del administrador -->
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
                             <a class="nav-link collapsed" href="administradores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>Administradores
@@ -102,17 +124,18 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                             </a>
                         <?php endif; ?>
 
-                        <!-- INSTRUCTORES -->
+                        <!-- Instructores -->
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador" || $_SESSION["tipoUsuario"] == "Instructor"): ?>
                             <a class="nav-link collapsed" href="instructores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>Instructores
                             </a>
                         <?php endif; ?>
 
-                        <!-- TRABAJOS -->
-                        <?php if ($_SESSION["tipoUsuario"] == "Aprendiz" || $_SESSION["tipoUsuario"] == "Instructor"): ?>
+                        <!-- Trabajos -->
+                        <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>Trabajos
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Trabajos
                             </a>
                         <?php endif; ?>
 
@@ -122,7 +145,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
             </nav>
         </div>
 
-        <!-- CONTENIDO -->
+        <!-- Contenido principal -->
         <div id="layoutSidenav_content">
             <main>
 
@@ -133,66 +156,134 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item active">Listado de aprendices</li>
                         </ol>
+                        <div class="text-end">
+                            <button class="btn btn-success mb-2" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Aprendiz</button>
+                        </div>
                     <?php endif; ?>
-                    <div class="text-end">
-                        <button class="btn btn-success mb-2" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Aprendiz</button>
-                    </div>
 
                     <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                         <h1 class="mt-4">Mi Perfil de Aprendiz</h1>
                     <?php endif; ?>
 
+                    <!-- Tabla de aprendices -->
                     <div class="card mb-4">
                         <div class="card-header d-flex">
                             <i class="fas fa-table me-2"></i>
                             <p>Aprendiz(es)</p>
                         </div>
 
+                        <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                            <div class="card-body">
+                                <table id="tablaAprendices">
+
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombres</th>
+                                            <th>Apellidos</th>
+                                            <th>Correo</th>
+                                            <th>Curso</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <?php foreach ($aprendices as $a): ?>
+                                            <tr>
+                                                <td><?= $a["id_aprendiz"]; ?></td>
+                                                <td><?= $a["nombre_aprendiz"]; ?></td>
+                                                <td><?= $a["apellido_aprendiz"]; ?></td>
+                                                <td><?= $a["correo_aprendiz"]; ?></td>
+                                                <td><?= $a["cursos_id_curso"]; ?></td>
+                                                <td><?= $a["estado_aprendiz"]; ?></td>
+
+                                                <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-warning"
+                                                            data-id="<?= $a["id_aprendiz"]; ?>"
+                                                            data-nombre="<?= $a["nombre_aprendiz"]; ?>"
+                                                            data-apellido="<?= $a["apellido_aprendiz"]; ?>"
+                                                            data-correo="<?= $a["correo_aprendiz"]; ?>"
+                                                            onclick="editarPerfil(this)">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </button>
+
+                                                        <button class="btn btn-sm btn-danger"
+                                                            data-id="<?= $a["id_aprendiz"]; ?>"
+                                                            data-nombre="<?= $a["nombre_aprendiz"]; ?>"
+                                                            onclick="eliminarAprendiz(this)">
+                                                            <i class="bi bi-person-x-fill"></i>
+                                                        </button>
+                                                    </td>
+                                                <?php endif; ?>
+
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+
+                    <!-- Tabla de trabajos -->
+                    <div class="card mb-4 mt-4">
+                        <div class="card-header d-flex">
+                            <i class="fas fa-briefcase me-2"></i>
+                            <p>Mis Trabajos Asignados</p>
+                        </div>
+
+                        <button class="btn btn-sm btn-primary"
+                            data-id="<?= $a["id_aprendiz"]; ?>"
+                            data-nombre="<?= $a["nombre_aprendiz"]; ?>"
+                            data-apellido="<?= $a["apellido_aprendiz"]; ?>"
+                            data-correo="<?= $a["correo_aprendiz"]; ?>"
+                            onclick="agregarTrbajo(this)">
+                            <i class="bi bi-card-checklist"></i>
+                        </button>
+
                         <div class="card-body">
-                            <table id="tablaAprendices">
+                            <table id="tablaTrabajos">
+
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nombres</th>
-                                        <th>Apellidos</th>
-                                        <th>Correo</th>
-                                        <th>Curso</th>
-                                        <th>Estado</th>
-                                        <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                                            <th>Acciones</th>
-                                        <?php endif; ?>
+                                        <th>ID Trabajo</th>
+                                        <th>Calificacion</th>
+                                        <th>Archivo</th>
+                                        <th>Comentario</th>
+                                        <th>Fecha Limite</th>
+                                        <th>Instructor</th>
+                                        <th>Aprendiz</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    <?php foreach ($aprendices as $a): ?>
+                                    <?php foreach ($trabajos as $t): ?>
                                         <tr>
-                                            <td><?= $a["id_aprendiz"]; ?></td>
-                                            <td><?= $a["nombre_aprendiz"]; ?></td>
-                                            <td><?= $a["apellido_aprendiz"]; ?></td>
-                                            <td><?= $a["correo_aprendiz"]; ?></td>
-                                            <td><?= $a["cursos_id_curso"]; ?></td>
-                                            <td><?= $a["estado_aprendiz"]; ?></td>
+                                            <td><?= $t["id_trabajo"]; ?></td>
+                                            <td><?= $t["calificacion_trabajo"]; ?></td>
+                                            <td><?= $t["ruta_trabajo"]; ?></td>
+                                            <td><?= $t["comentario_trabajo"]; ?></td>
+                                            <td><?= $t["fecha_limite_trabajo"]; ?></td>
+                                            <td><?= $t["nombre_instructor"]; ?></td>
+                                            <td><?= $t["nombre_aprendiz"]; ?></td>
 
-                                            <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                                            <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                                                 <td>
-                                                    <button class="btn btn-sm btn-warning"
+                                                    <button class="btn btn-sm btn-success"
                                                         data-id="<?= $a["id_aprendiz"]; ?>"
                                                         data-nombre="<?= $a["nombre_aprendiz"]; ?>"
                                                         data-apellido="<?= $a["apellido_aprendiz"]; ?>"
                                                         data-correo="<?= $a["correo_aprendiz"]; ?>"
                                                         onclick="editarPerfil(this)">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-
-                                                    <button class="btn btn-sm btn-danger"
-                                                        data-id="<?= $a["id_aprendiz"]; ?>"
-                                                        data-nombre="<?= $a["nombre_aprendiz"]; ?>"
-                                                        onclick="eliminarAprendiz(this)">
-                                                        <i class="bi bi-person-x-fill"></i>
+                                                        <i class="bi bi-journal-plus"></i>
                                                     </button>
                                                 </td>
                                             <?php endif; ?>
+
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -216,10 +307,9 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
 
     <?php $mysql->desconectar(); ?>
 
-    <!-- JS DE APRENDICES -->
-    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+    <!-- Scripts -->
+    <?php if ($_SESSION["tipoUsuario"] == "Administrador" || $_SESSION["tipoUsuario"] == "Aprendiz"): ?>
         <script src="js/aprendices/editarPerfilAprendiz.js"></script>
-
     <?php endif; ?>
 
     <script src="js/cerrar_sesion.js"></script>
@@ -228,6 +318,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <script src="js/scripts.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
     <script src="js/datatables/datatables-simple-demo.js"></script>
+
 </body>
 
 </html>
