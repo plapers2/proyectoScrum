@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         };
         //* Verificaciones
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if (password_verify($pass, $usuario['pass'.$tipo])) {
+            if (password_verify($pass, $usuario['pass' . $tipo])) {
                 //* Se guardan credenciales en variable global $_SESSION
                 $_SESSION['idUsuario'] = $usuario['id' . $tipo];
                 $_SESSION['emailUsuario'] = $usuario['correo' . $tipo];
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //* Exito
                 switch ($tipo) {
                     case 'Administrador':
-                        header("Location: ../dist/administradores.php");
+                        header("Location: ../dist/instructores.php");
                         break;
                     case 'Instructor':
                         header("Location: ../dist/instructores.php");
