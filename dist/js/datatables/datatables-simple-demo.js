@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-window.addEventListener('DOMContentLoaded', event => {
-    // Simple-DataTables
-    // https://github.com/fiduswriter/Simple-DataTables/wiki
-
-    const tablaClientes = document.getElementById('tablaClientes');
-    if (tablaClientes) {
-        new simpleDatatables.DataTable(tablaClientes, {
-            labels: {
-                placeholder: "Buscar...",
-                perPage: "registros por página", 
-                noRows: "No se encontraron resultados",
-                info: "Mostrando {start} a {end} de {rows} registros",
-                noResults: "No hay resultados para tu búsqueda"
-=======
 window.addEventListener('DOMContentLoaded', (event) => {
     // Simple-DataTables
     // https://github.com/fiduswriter/Simple-DataTables/wiki
@@ -74,29 +59,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 noRows: 'No se encontraron resultados',
                 info: 'Mostrando {start} a {end} de {rows} registros',
                 noResults: 'No hay resultados para tu búsqueda',
->>>>>>> c0dfe0b8eb59f98d2295982a37a78efd445f0cff
             },
         });
     }
 });
-<<<<<<< HEAD
-window.addEventListener('DOMContentLoaded', event => {
-    // Simple-DataTables
-    // https://github.com/fiduswriter/Simple-DataTables/wiki
-
-    const tablaEmpleados = document.getElementById('tablaEmpleados');
-    if (tablaEmpleados) {
-        new simpleDatatables.DataTable(tablaEmpleados, {
-            labels: {
-                placeholder: "Buscar...",
-                perPage: "registros por página", 
-                noRows: "No se encontraron resultados",
-                info: "Mostrando {start} a {end} de {rows} registros",
-                noResults: "No hay resultados para tu búsqueda"
-            },
-        });
-    }
-});
-
-=======
->>>>>>> c0dfe0b8eb59f98d2295982a37a78efd445f0cff

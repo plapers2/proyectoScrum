@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } else {
                 $mysql->desconectar();
-                header("Location: ../dist/login.php?error=true&message=Usuario no encontrado, registrate!&title=Error!");
+                header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
                 exit();
             }
         } else {
