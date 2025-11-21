@@ -13,11 +13,12 @@ switch ($_SESSION['tipoUsuario']) {
         header("Location: aprendices.php?error=true&message=Acceso denegado, solo se acepta personal autorizado!&title=Acceso denegado!");
         exit;
     case 'Administrador':
-        $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos;");
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos ORDER BY estado_curso ASC, id_curso ASC;");
         break;
     case 'Instructor':
         $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos_has_instructores as p 
-        JOIN cursos as c ON c.id_curso = p.cursos_id_curso WHERE c.estado_curso = 'Activo' AND p.cursos_id_curso = " . $_SESSION['idUsuario'] . " GROUP BY c.id_curso;");
+        JOIN cursos as c ON c.id_curso = p.cursos_id_curso 
+        WHERE c.estado_curso = 'Activo' AND p.cursos_id_curso = " . $_SESSION['idUsuario'] . " GROUP BY c.id_curso ORDER BY c.estado_curso DESC;");
         break;
     default:
         break;
@@ -172,15 +173,15 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                             <td><?php echo $datoFila['descripcion_curso']; ?></td>
                                             <td>
                                                 <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
-                                                    <button class="btn btn-warning mb-4" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
+                                                    <button class="btn btn-warning mb-4 btn-sm" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
                                                     <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
-                                                        <button class="btn btn-danger mb-4" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                        <button class="btn btn-danger mb-4 btn-sm" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
                                                     <?php } else { ?>
-                                                        <button class="btn btn-success mb-4" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                        <button class="btn btn-success mb-4 btn-sm" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
                                                     <?php } ?>
-                                                    <button class="btn btn-primary mb-4" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Instructores</button>
+                                                    <button class="btn btn-primary mb-4 btn-sm" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Instructores</button>
                                                 <?php } ?>
-                                                <button class="btn btn-primary mb-4" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Aprendices</button>
+                                                <button class="btn btn-primary mb-4 btn-sm" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Aprendices</button>
                                             </td>
                                         </tr>
                                     <?php }

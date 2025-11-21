@@ -576,6 +576,7 @@ async function contenidoAsociarInstructoresCursos(id) {
         //? Se traen datos de usuario por ID
         const instructores = await traerDatosInstructores();
         const instructoresSelect = await traerDatosCursosHasInstructoresPorID(id);
+        crear
         //? Se inicializa el form
         const form = crearForm();
         //? CheckBox Instructores
@@ -592,7 +593,10 @@ async function contenidoAsociarInstructoresCursos(id) {
                 }
             }
             divCheckBox.append(input);
-            const label = crearLabelForm('Instructor' + (i + 1), instructores[i].nombre_instructor);
+            const label = crearLabelForm(
+                'Instructor' + (i + 1),
+                instructores[i].nombre_instructor + ' ' + instructores[i].apellido_instructor,
+            );
             label.removeAttribute('class');
             label.classList.add('form-check-label');
 
