@@ -381,6 +381,30 @@ function crearLi(text) {
 //TODO Fin Crear Lista
 // #endregion
 
+// #region //* Crear TextArea
+//TODO Inicio Crear TextArea
+function crearTextArea(id, text) {
+    try {
+        let divContenedor = document.createElement('div');
+        divContenedor.classList.add('form-floating');
+        //? Creacion de elemento DivForm
+        let textArea = document.createElement('textarea');
+        textArea.classList.add('form-control');
+        textArea.setAttribute('style', 'height: 150px');
+        textArea.setAttribute('id', id);
+        textArea.textContent = text;
+        //? Retorno de elemento
+        divContenedor.append(textArea);
+        return divContenedor;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Crear TextArea
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Definicion de Funciones createElement
 //! /////////////////////////////////////////////////////////
@@ -407,9 +431,9 @@ async function contenidoCursoInsertar() {
         //? Descripcion
         const descripcionDiv = crearDivForm();
         const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
-        const descripcionInput = crearInputForm('descripcionCurso', 'text', '');
+        const descripcionTextArea = crearTextArea('descripcionCurso', '');
         descripcionDiv.append(descripcionLabel);
-        descripcionDiv.append(descripcionInput);
+        descripcionDiv.append(descripcionTextArea);
         //? Asignacion final Form
         form.append(nombreDiv);
         form.append(descripcionDiv);
@@ -435,15 +459,15 @@ async function contenidoCursoEditar(id) {
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreCurso', 'Nombre');
-        const nombreInput = crearInputForm('nombreCurso', 'text', datosCurso.nombre_curso);
+        const nombreInput = crearInputForm('nombreCurso', 'text', datosCurso[0].nombre_curso);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Descripcion
         const descripcionDiv = crearDivForm();
         const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
-        const descripcionInput = crearInputForm('descripcionCurso', 'text', datosCurso.descripcion_curso);
+        const descripcionTextArea = crearTextArea('descripcionCurso', datosCurso[0].descripcion_curso);
         descripcionDiv.append(descripcionLabel);
-        descripcionDiv.append(descripcionInput);
+        descripcionDiv.append(descripcionTextArea);
         //? Asignacion final Form
         form.append(nombreDiv);
         form.append(descripcionDiv);
@@ -468,7 +492,7 @@ async function contenidoCursoActivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el Curso ${curso.nombre_curso} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el Curso ${curso[0].nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -493,7 +517,7 @@ async function contenidoCursoDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el Curso ${curso.nombre_curso} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el Curso ${curso[0].nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -536,7 +560,7 @@ async function contenidoCursoVerAprendices(id) {
 
 // #region //* Contenido Curso Ver Instructores
 //TODO Inicio Contenido Curso Ver Instructores
-async function contenidoCursoVerInstructores(id) {
+async function contenidoCursoVerInstructores(id, estado) {
     try {
         //? Se traen datos de usuario por ID
         const aprendices = await traerDatosCursoInstructoresPorID(id);
@@ -553,12 +577,13 @@ async function contenidoCursoVerInstructores(id) {
             const li = crearLi('No hay ningun instructor asociado a este curso!');
             div.append(li);
         }
-        const button = crearButton('button', 'Editar instructores asociados');
-        button.setAttribute('class', 'btn btn-success mt-4 btn-sm');
-        button.setAttribute('onclick', 'sweetCursoAsociarInstructores(' + curso[0].id_curso + ')');
         contenedorMain.append(div);
-        contenedorMain.append(button);
-
+        if (estado == 'Activo') {
+            const button = crearButton('button', 'Editar instructores asociados');
+            button.setAttribute('class', 'btn btn-success mt-4 btn-sm');
+            button.setAttribute('onclick', 'sweetCursoAsociarInstructores(' + curso[0].id_curso + ')');
+            contenedorMain.append(button);
+        }
         return contenedorMain;
     } catch (e) {
         //? Control de errores
@@ -576,7 +601,6 @@ async function contenidoAsociarInstructoresCursos(id) {
         //? Se traen datos de usuario por ID
         const instructores = await traerDatosInstructores();
         const instructoresSelect = await traerDatosCursosHasInstructoresPorID(id);
-        crear
         //? Se inicializa el form
         const form = crearForm();
         //? CheckBox Instructores
@@ -909,11 +933,11 @@ async function sweetCursoVerAprendices(id) {
 
 // #region //* Sweet Curso Ver Instructores
 //TODO Inicio SweetAlert Curso Ver Instructores
-async function sweetCursoVerInstructores(id) {
+async function sweetCursoVerInstructores(id, estado) {
     try {
         Swal.fire({
             title: 'Instructores Asociados',
-            html: await contenidoCursoVerInstructores(id),
+            html: await contenidoCursoVerInstructores(id, estado),
             showConfirmButton: false,
             showCancelButton: true,
             cancelButtonText: 'Cerrar',

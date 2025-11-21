@@ -38,7 +38,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Dashboard - Biblioteca ADSO</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -140,48 +140,48 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                         <li class="breadcrumb-item active">Panel de Administracion</li>
                     </ol>
                     <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
-                        <button class="btn btn-success mb-4" id="cursoInsertar"><i class="bi bi-journal-plus"></i> Crear nuevo Curso</button>
+                        <button class="btn btn-success mb-4 fs-4" id="cursoInsertar"><i class="bi bi-journal-plus"></i> Crear nuevo Curso</button>
                     <?php } ?>
-                    <div class="card mb-4">
+                    <div class="card mb-4 border-black">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
                             Cursos
                         </div>
                         <div class="card-body">
-                            <table id="tablaInstructores">
+                            <table id="tablaCursos" class="table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Descripcion</th>
-                                        <th>Acciones</th>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-center">Descripcion</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Descripcion</th>
-                                        <th>Acciones</th>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-center">Descripcion</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     <?php foreach ($datos as $datoFila) { ?>
                                         <tr>
-                                            <td><?php echo $datoFila['id_curso']; ?></td>
-                                            <td><?php echo $datoFila['nombre_curso']; ?></td>
-                                            <td><?php echo $datoFila['descripcion_curso']; ?></td>
-                                            <td>
+                                            <td class="fs-6"><?php echo $datoFila['id_curso']; ?></td>
+                                            <td class="fs-6"><?php echo $datoFila['nombre_curso']; ?></td>
+                                            <td class="fs-6"><?php echo $datoFila['descripcion_curso']; ?></td>
+                                            <td class="d-flex justify-content-center gap-1">
                                                 <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
-                                                    <button class="btn btn-warning mb-4 btn-sm" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
                                                     <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
-                                                        <button class="btn btn-danger mb-4 btn-sm" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                        <button class="btn btn-warning btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-pencil-square"></i> Editar</button>
+                                                        <button class="btn btn-danger btn-sm fs-6" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-trash"></i> Desactivar</button>
                                                     <?php } else { ?>
-                                                        <button class="btn btn-success mb-4 btn-sm" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                        <button class="btn btn-success btn-sm fs-6" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-check-circle"></i> Activar</button>
                                                     <?php } ?>
-                                                    <button class="btn btn-primary mb-4 btn-sm" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Instructores</button>
+                                                    <button class="btn btn-primary btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>,'<?php echo $datoFila['estado_curso'] ?>')"><i class="bi bi-eye"></i> Instructores</button>
                                                 <?php } ?>
-                                                <button class="btn btn-primary mb-4 btn-sm" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Aprendices</button>
+                                                <button class="btn btn-primary btn-sm fs-6" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-eye"></i> Aprendices</button>
                                             </td>
                                         </tr>
                                     <?php }
@@ -210,7 +210,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables/datatables-simple-demo.js"></script>
     <script src="js/cursos/sweetAlertCursos.js"></script>
     <script src="js/sweetAlerts.js"></script>
