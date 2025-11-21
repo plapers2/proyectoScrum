@@ -17,7 +17,7 @@ switch ($_SESSION['tipoUsuario']) {
         break;
     case 'Instructor':
         $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos_has_instructores as p 
-        JOIN cursos as c ON c.id_curso = p.cursos_id_curso WHERE p.cursos_id_curso = " . $_SESSION['idUsuario'] . ";");
+        JOIN cursos as c ON c.id_curso = p.cursos_id_curso WHERE c.estado_curso = 'Activo' AND p.cursos_id_curso = " . $_SESSION['idUsuario'] . " GROUP BY c.id_curso;");
         break;
     default:
         break;
@@ -94,10 +94,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                 Administradores
                             </a>
-                            <a class="nav-link collapsed" href="cursos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                                Cursos
-                            </a>
+
                             <a class="nav-link collapsed" href="aprendices.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
@@ -108,6 +105,10 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                             $_SESSION["tipoUsuario"] == "Administrador"
                             || $_SESSION["tipoUsuario"] == "Instructor"
                         ): ?>
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
+                            </a>
                             <a class="nav-link collapsed" href="instructores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                                 Instructores
@@ -172,14 +173,14 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                             <td>
                                                 <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
                                                     <button class="btn btn-warning mb-4" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
+                                                    <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
+                                                        <button class="btn btn-danger mb-4" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                    <?php } else { ?>
+                                                        <button class="btn btn-success mb-4" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                    <?php } ?>
                                                     <button class="btn btn-primary mb-4" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Instructores</button>
                                                 <?php } ?>
                                                 <button class="btn btn-primary mb-4" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Aprendices</button>
-                                                <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
-                                                    <button class="btn btn-danger mb-4" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
-                                                <?php } else { ?>
-                                                    <button class="btn btn-success mb-4" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
-                                                <?php } ?>
                                             </td>
                                         </tr>
                                     <?php }
