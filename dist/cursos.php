@@ -1,38 +1,31 @@
 <?php
 session_start();
+if (!$_SESSION) {
+    header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+    exit;
+}
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-if (
-    !isset($_SESSION["idUsuario"])
-    || empty($_SESSION["idUsuario"])
-) {
-    header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
-    $mysql->desconectar();
-    exit;
-}
-/* switch ($_SESSION['tipoUsuario']) {
-    case 'Administrador':
-        header("Location: administradores.php?error=true&message=Acceso denegado, solo se aceptan instructores!&title=Acceso denegado!");
-        exit;
+$resultado = '';
+switch ($_SESSION['tipoUsuario']) {
     case 'Aprendiz':
-        header("Location: instructores.php?error=true&message=Acceso denegado, solo se aceptan instructores!&title=Acceso denegado!");
+        header("Location: aprendices.php?error=true&message=Acceso denegado, solo se acepta personal autorizado!&title=Acceso denegado!");
         exit;
+    case 'Administrador':
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos ORDER BY estado_curso ASC, id_curso ASC;");
+        break;
+    case 'Instructor':
+        $resultado = $mysql->efectuarConsulta("SELECT * FROM cursos_has_instructores as p 
+        JOIN cursos as c ON c.id_curso = p.cursos_id_curso 
+        WHERE c.estado_curso = 'Activo' AND p.cursos_id_curso = " . $_SESSION['idUsuario'] . " GROUP BY c.id_curso ORDER BY c.estado_curso DESC;");
+        break;
     default:
         break;
-} */
-$resultado;
-if ($_SESSION["tipoUsuario"] == "Administrador") {
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE estado_instructor = 'Activo'");
-} else if ($_SESSION["tipoUsuario"] == "Instructor") {
-    $id = $_SESSION["idUsuario"];
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM instructores WHERE estado_instructor = 'Activo'
-                                            AND id_instructor = $id");
-}
-
-$instructores = [];
-while ($valor = mysqli_fetch_assoc($resultado)) {
-    $instructores[] = $valor;
+};
+$datos = [];
+while ($fila = mysqli_fetch_assoc($resultado)) {
+    $datos[] = $fila;
 }
 ?>
 <!DOCTYPE html>
@@ -44,8 +37,8 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Instructores - Biblioteca ADSO</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <title>Dashboard - Biblioteca ADSO</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -74,7 +67,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" id="btn_cerrar_sesion"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
                 </ul>
             </li>
         </ul>
@@ -142,70 +135,57 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                        <h1 class="mt-4">Panel de Instructores</h1>
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item active">Panel de Instructores</li>
-                        </ol>
-                        <div class="text-end">
-                            <button class="btn btn-success mb-2" id="btn_registro_instructor"><i class="bi bi-person-add"></i> Insertar Instructor</button>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-                        <h1 class="mt-4">Panel de Instructor</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Panel de Instructor</li>
-                        </ol>
-                    <?php endif; ?>
-                    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                    <?php endif; ?>
-                    <div class="card mb-4">
-                        <div class="card-header d-flex">
-                            <i class="fas fa-table me-2"></i>
-                            <p>Instructor</p>
-                            <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                                <span>es</span>
-                            <?php endif; ?>
+                    <h1 class="mt-4">Cursos</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item active">Panel de Administracion</li>
+                    </ol>
+                    <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
+                        <button class="btn btn-success mb-4 fs-4" id="cursoInsertar"><i class="bi bi-journal-plus"></i> Crear nuevo Curso</button>
+                    <?php } ?>
+                    <div class="card mb-4 border-black">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            Cursos
                         </div>
                         <div class="card-body">
-                            <table id="tablaInstructores">
+                            <table id="tablaCursos" class="table-hover">
                                 <thead>
                                     <tr>
-                                        <th>ID instructor</th>
-                                        <th>Nombres</th>
-                                        <th>Apellidos</th>
-                                        <th>Correo</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-center">Descripcion</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="text-center">Descripcion</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </tfoot>
                                 <tbody>
-                                    <?php foreach ($instructores as $valor): ?>
+                                    <?php foreach ($datos as $datoFila) { ?>
                                         <tr>
-                                            <td><?php echo $valor['id_instructor']; ?></td>
-                                            <td><?php echo $valor['nombre_instructor']; ?></td>
-                                            <td><?php echo $valor['apellido_instructor']; ?></td>
-                                            <td><?php echo $valor['correo_instructor']; ?></td>
-                                            <td><?php echo $valor["estado_instructor"]; ?></td>
-                                            <td>
-                                                <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                                                    <button data-id="<?= $valor["id_instructor"]; ?>"
-                                                        data-nombre="<?= $valor["nombre_instructor"]; ?>"
-                                                        data-apellido="<?= $valor["apellido_instructor"]; ?>"
-                                                        data-correo="<?= $valor["correo_instructor"]; ?>"
-                                                        class="btn btn-sm btn-warning"
-                                                        onclick="editarInstructor(this)">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-                                                    <button data-id="<?= $valor["id_instructor"]; ?>"
-                                                        data-nombre="<?= $valor["nombre_instructor"]; ?>"
-                                                        class="btn btn-sm btn-danger" onclick="eliminarInstructor(this)">
-                                                        <i class="bi bi-person-x-fill"></i>
-                                                    </button>
-                                                <?php endif; ?>
+                                            <td class="fs-6"><?php echo $datoFila['id_curso']; ?></td>
+                                            <td class="fs-6"><?php echo $datoFila['nombre_curso']; ?></td>
+                                            <td class="fs-6"><?php echo $datoFila['descripcion_curso']; ?></td>
+                                            <td class="d-flex justify-content-center gap-1">
+                                                <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
+                                                    <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
+                                                        <button class="btn btn-warning btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-pencil-square"></i> Editar</button>
+                                                        <button class="btn btn-danger btn-sm fs-6" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-trash"></i> Desactivar</button>
+                                                    <?php } else { ?>
+                                                        <button class="btn btn-success btn-sm fs-6" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-check-circle"></i> Activar</button>
+                                                    <?php } ?>
+                                                    <button class="btn btn-primary btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>,'<?php echo $datoFila['estado_curso'] ?>')"><i class="bi bi-eye"></i> Instructores</button>
+                                                <?php } ?>
+                                                <button class="btn btn-primary btn-sm fs-6" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-eye"></i> Aprendices</button>
                                             </td>
                                         </tr>
-                                    <?php endforeach; ?>
+                                    <?php }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -214,30 +194,25 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
             </main>
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
-                    <div class="d-flex justify-content-center small">
-                        <div class="text-muted">Realizado por <span style="color: blueviolet;">CodeÁngels</span></div>
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; ADSO 3064749 / 2025</div>
+                        <div>
+                            <button class="btn btn-link" id="politicaPrivacidad">Política &amp; Privacidad</button>
+                            &middot;
+                            <button class="btn btn-link" id="terminosCondiciones">Términos &amp; Condiciones</button>
+                        </div>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
-    <?php $mysql->desconectar(); ?>
-    <!--JS instructores-->
-    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-        <script src="js/instructores/registrarInstructor.js"></script>
-        <script src="js/instructores/editarInstructor.js"></script>
-        <script src="js/instructores/eliminarInstructor.js"></script>
-    <?php endif; ?>
-
-    <script src="js/cerrar_sesion.js"></script>
-
-    <!--CDNS-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables/datatables-simple-demo.js"></script>
+    <script src="js/cursos/sweetAlertCursos.js"></script>
     <script src="js/sweetAlerts.js"></script>
 </body>
 

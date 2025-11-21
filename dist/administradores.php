@@ -4,19 +4,51 @@ if (!$_SESSION) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
+
 if ($_SESSION['tipoUsuario'] != 'Administrador') {
     header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
     exit;
 }
+
+switch ($_SESSION['tipoUsuario']) {
+    case 'Instructor':
+        header("Location: instructores.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
+        exit;
+    case 'Aprendiz':
+        header("Location: aprendices.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
+        exit;
+    default:
+        break;
+};
+
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
+
 
 $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario 
 JOIN roles ON roles.id_rol = usuario.fk_rol_usuario");
 $usuario = [];
 while ($fila = mysqli_fetch_assoc($resultado)) {
     $usuario[] = $fila;
+
+$instructoresDB = $mysql->efectuarConsulta("SELECT * FROM instructores");
+$instructores = [];
+while ($fila = mysqli_fetch_assoc($instructoresDB)) {
+    $instructores[] = $fila;
+}
+
+$aprendicesDB = $mysql->efectuarConsulta("SELECT * FROM aprendices;");
+$aprendices = [];
+while ($fila = mysqli_fetch_assoc($aprendicesDB)) {
+    $aprendices[] = $fila;
+}
+
+$adminsDB = $mysql->efectuarConsulta("SELECT * FROM administradores;");
+$admins = [];
+while ($fila = mysqli_fetch_assoc($adminsDB)) {
+    $admins[] = $fila;
+
 }
 ?>
 <!DOCTYPE html>
@@ -28,7 +60,11 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+
     <title>Dashboard - Proyecto Scrum</title>
+
+    <title>Dashboard - Biblioteca ADSO</title>
+
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -40,9 +76,11 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
+
         <a class="navbar-brand ps-3" href="<?php echo ($_SESSION['tipoUsuario'] != "Administrador") ? "libros.php" :  "dashboard.php" ?>">
             <?php echo $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
         </a>
+
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -58,7 +96,9 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+
                     <li><button class="dropdown-item text-success" id="configuracionPerfil" onclick="sweetConfiguracionPerfil('<?php echo $_SESSION['idUsuario'] ?>','<?php echo $_SESSION['tipoUsuario'] ?>')"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
@@ -72,6 +112,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
+
                         <?php
                         if ($_SESSION['tipoUsuario'] === "Administrador") {
                             echo '<div class="sb-sidenav-menu-heading">Administracion</div>
@@ -112,6 +153,58 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <div class="small">Logueado como:</div>
                     <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['tipoUsuario'] . "</p>"; ?>
                 </div>
+
+                        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
+                        <!-- Editar Perfil -->
+                        <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
+                            <a data-id="<?= $_SESSION["idUsuario"]; ?>"
+                                data-nombre="<?= $_SESSION["nombreUsuario"]; ?>"
+                                data-apellido="<?= $_SESSION["apellidoUsuario"]; ?>"
+                                data-correo="<?= $_SESSION["emailUsuario"]; ?>"
+                                class="btn nav-link collapsed" onclick="editarPerfil(this)">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
+                                Editar Perfil
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                            <a class="nav-link collapsed" href="administradores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                                Administradores
+                            </a>
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
+                            </a>
+                            <a class="nav-link collapsed" href="aprendices.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
+                                Aprendices
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Administrador"
+                            || $_SESSION["tipoUsuario"] == "Instructor"
+                        ): ?>
+                            <a class="nav-link collapsed" href="instructores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                                Instructores
+                            </a>
+                        <?php endif; ?>
+
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Instructor"
+                            || $_SESSION["tipoUsuario"] == "Aprendiz"
+                        ): ?>
+                            <a class="nav-link collapsed" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                                Trabajos
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                </div>
             </nav>
         </div>
         <!-- Contenido principal -->
@@ -122,14 +215,19 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Panel de Administracion</li>
                     </ol>
+
                     <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Insertar Usuario</button>
                     <button class="btn btn-success mb-4" id="generarArchivos"><i class="bi bi-folder-plus"></i> Generar Archivos</button>
+
+                    <button class="btn btn-success mb-4" id="administradorInsertar"><i class="bi bi-person-add"></i> Crear nuevo Administrador</button>
+
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
                             Administradores
                         </div>
                         <div class="card-body">
+
                             <table id="tablaEmpleados">
                                 <thead>
                                     <tr>
@@ -138,20 +236,37 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                         <th>Apellido</th>
                                         <th>Email</th>
                                         <th>Estado</th>
+
+                            <table id="tablaAdministradores">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                     <tr>
 
+
                                         <th>Nombre</th>
                                         <th>Apellido</th>
                                         <th>Email</th>
                                         <th>Estado</th>
+
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>
+
                                         <th>Acciones</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
+
                                     <?php foreach ($usuario as $filaUsuario) {
                                         if ($filaUsuario['tipoUsuario'] != 'Aprendiz') {  ?>
                                             <tr>
@@ -221,6 +336,27 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                     <?php }
                                     }
                                     ?>
+
+                                    <?php foreach ($admins as $filaUsuario) {
+                                    ?>
+                                        <tr>
+                                            <td><?php echo $filaUsuario['id_administrador'] ?></td>
+                                            <td><?php echo $filaUsuario['nombre_administrador']; ?></td>
+                                            <td><?php echo $filaUsuario['apellido_administrador']; ?></td>
+                                            <td><?php echo $filaUsuario['correo_administrador']; ?></td>
+                                            <td>
+                                                <button class="btn btn-warning mb-4" id="usuarioInsertar" onclick="sweetAdminEditar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Editar</button>
+                                                <?php if ($filaUsuario['estado_administrador'] == 'Activo') { ?>
+                                                    <button class="btn btn-danger mb-4" id="administradorDesactivar" onclick="sweetAdminDesactivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Desactivar</button>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-info mb-4" id="administradorActivar" onclick="sweetAdminActivar(<?php echo $filaUsuario['id_administrador'] ?>)"><i class="bi bi-person-add"></i> Activar</button>
+                                                <?php } ?>
+
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    } ?>
+
                                 </tbody>
                             </table>
                         </div>
@@ -247,6 +383,9 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="js/datatables/datatables-simple-demo.js"></script>
+
+    <script src="js/administradores/sweetAlertAdmin.js"></script>
+
     <script src="js/sweetAlerts.js"></script>
 </body>
 
