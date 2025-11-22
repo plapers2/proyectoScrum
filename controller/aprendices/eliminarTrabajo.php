@@ -2,25 +2,38 @@
 session_start();
 require_once '../../models/MySQL.php';
 
-$mysql = new MySQL();
-$mysql->conectar();
-
-if ($_SESSION["tipoUsuario"] != "Instructor") {
-    header("Location: ../../dist/login.php?error=true&message=Acceso denegado");
+if (!isset($_SESSION["tipoUsuario"]) || 
+   !in_array($_SESSION["tipoUsuario"], ["Instructor", "Administrador"])) {
+    header("Location: ../../dist/trabajos.php?error=No autorizado");
     exit;
 }
 
-$id = $_GET["id"];
+$mysql = new MySQL();
+$mysql->conectar();
 
-// borrar archivo del servidor
-$trabajo = $mysql->efectuarConsulta("SELECT ruta_trabajo FROM trabajos WHERE id_trabajo = $id");
-
-if ($fila = mysqli_fetch_assoc($trabajo)) {
-    $archivo = "../../" . $fila["ruta_trabajo"];
-    if (file_exists($archivo)) unlink($archivo); 
+if (!isset($_GET["id"])) {
+    header("Location: ../../dist/trabajos.php?error=ID inválido");
+    exit;
 }
 
-$mysql->efectuarConsulta("DELETE FROM trabajos WHERE id_trabajo = $id");
+$id = intval($_GET["id"]);
 
-header("Location: ../../dist/trabajos.php?success=Trabajo eliminado");
-exit;
+// Obtener archivo para eliminarlo del servidor
+$consulta = $mysql->efectuarConsulta("SELECT ruta_trabajo FROM trabajos WHERE id_trabajo = $id");
+$fila = mysqli_fetch_assoc($consulta);
+
+if ($fila && file_exists($fila["ruta_trabajo"])) {
+    unlink($fila["ruta_trabajo"]);
+}
+
+// Eliminar registro
+$sql = "DELETE FROM trabajos WHERE id_trabajo = $id";
+
+if ($mysql->efectuarConsulta($sql)) {
+    header("Location: ../../dist/trabajos.php?success=Trabajo eliminado");
+} else {
+    header("Location: ../../dist/trabajos.php?error=No se pudo eliminar");
+}
+
+$mysql->desconectar();
+?>

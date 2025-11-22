@@ -229,42 +229,42 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                             <p>Mis Trabajos Asignados</p>
                         </div>
 
-                       <!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSubirTrabajo">
-  Subir Trabajo
-</button>
+                        <!-- Botón para abrir el modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSubirTrabajo">
+                            Subir Trabajo
+                        </button>
 
-<!-- Modal -->
-<div class="modal fade" id="modalSubirTrabajo" tabindex="-1" aria-labelledby="modalSubirTrabajoLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-     <form action="../controller/aprendices/insertarTrabajo.php" method="POST" enctype="multipart/form-data">
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalSubirTrabajo" tabindex="-1" aria-labelledby="modalSubirTrabajoLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="../controller/aprendices/insertarTrabajo.php" method="POST" enctype="multipart/form-data">
 
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalSubirTrabajoLabel">Subir Trabajo</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <!-- Instructor oculto (puedes pasar el ID si lo tienes) -->
-          <input type="hidden" name="id_instructor" value="1">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalSubirTrabajoLabel">Subir Trabajo</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Instructor oculto (puedes pasar el ID si lo tienes) -->
+                                            <input type="hidden" name="id_instructor" value="1">
 
-          <!-- Archivo -->
-          <div class="mb-3">
-            <label for="archivo" class="form-label">Selecciona tu archivo</label>
-            <input type="file" class="form-control" id="archivo" name="archivo" required>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Subir Trabajo</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+                                            <!-- Archivo -->
+                                            <div class="mb-3">
+                                                <label for="archivo" class="form-label">Selecciona tu archivo</label>
+                                                <input type="file" class="form-control" id="archivo" name="archivo" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Subir Trabajo</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
-<!-- JS de Bootstrap 5 (asegúrate de tenerlo) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                        <!-- JS de Bootstrap 5 (asegúrate de tenerlo) -->
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
                         <div class="card-body">
@@ -285,14 +285,14 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                 <tbody>
                                     <?php foreach ($trabajos as $t): ?>
                                         <tr>
-                                          <td><?= $t["nombre_instructor"]; ?></td>
-<td><?= $t["apellido_instructor"]; ?></td>
-<td><?= $t["estado_instructor"]; ?></td>
-<td><?= $t["ruta_trabajo"]; ?></td>
-<td><?= $t["fecha_limite_trabajo"]; ?></td>
-<td><?= $t["aprendices_id_aprendiz"]; ?></td>
+                                            <td><?= $t["nombre_instructor"]; ?></td>
+                                            <td><?= $t["apellido_instructor"]; ?></td>
+                                            <td><?= $t["estado_instructor"]; ?></td>
+                                            <td><?= $t["ruta_trabajo"]; ?></td>
+                                            <td><?= $t["fecha_limite_trabajo"]; ?></td>
+                                            <td><?= $t["aprendices_id_aprendiz"]; ?></td>
 
-                                            
+
 
                                             <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                                                 <td>
