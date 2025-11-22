@@ -14,261 +14,67 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Login - Proyecto Scrum ADSO</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Login - BACKLOG ADSO</title>
+    <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
-            --secondary-gradient: linear-gradient(135deg, #10b981 0%, #065f46 100%);
-        }
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            display: flex;
-            flex-direction: column;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        #layoutAuthentication {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #layoutAuthentication_content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 0;
-        }
-
-        .login-card {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 2rem;
-            border: none;
-        }
-
-        .card-header h3 {
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .card-header i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-
-        .card-body {
-            padding: 2.5rem;
-        }
-
-        .form-floating {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-control, .form-select {
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .btn-primary {
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 10px;
-            padding: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn-register {
-            background: var(--secondary-gradient);
-            border: none;
-            border-radius: 10px;
-            padding: 0.5rem 2rem;
-            color: white;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
-            color: white;
-        }
-
-        .card-footer {
-            background: rgba(248, 249, 250, 0.5);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-        }
-
-        footer {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            color: white;
-            margin-top: auto;
-        }
-
-        footer .text-muted {
-            color: rgba(255, 255, 255, 0.8) !important;
-        }
-
-        footer .btn-link {
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        footer .btn-link:hover {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: underline;
-        }
-
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #667eea;
-            z-index: 10;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .login-card {
-            animation: fadeInUp 0.6s ease;
-        }
-
-        @media (max-width: 576px) {
-            .card-body {
-                padding: 1.5rem;
-            }
-            
-            .card-header {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <!--Estilo personalizado-->
+    <link href="css/1-estilo.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="min-vh-100">
     <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
         <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
     <?php } ?>
-    
-    <div id="layoutAuthentication">
-        <div id="layoutAuthentication_content">
-            <main class="w-100">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-5 col-md-7 col-sm-9">
-                            <div class="card login-card">
-                                <div class="card-header text-center">
-                                    <i class="fas fa-book-reader"></i>
-                                    <h3 class="font-weight-light">Proyecto Scrum ADSO</h3>
-                                    <p class="mb-0 small">Inicia sesión para continuar</p>
-                                </div>
-                                <div class="card-body">
-                                    <form action="../controller/controllerLogin.php" method="post">
-                                        <div class="form-floating input-icon">
-                                            <input class="form-control" id="usuarioLogin" type="text" placeholder="Usuario" name="usuarioLogin" required />
-                                            <label for="usuarioLogin"><i class="fas fa-user me-2"></i>Usuario</label>
-                                        </div>
-                                        <div class="form-floating input-icon">
-                                            <input class="form-control" id="passLogin" type="password" placeholder="Contraseña" name="passLogin" required />
-                                            <label for="passLogin"><i class="fas fa-lock me-2"></i>Contraseña</label>
-                                        </div>
-                                        <div class="form-floating">
-                                            <select class="form-select" id="tipoUsuarioLogin" name="tipoUsuarioLogin" required>
-                                                <option selected value="nada">Selecciona tu rol</option>
-                                                <option value="Administrador">Administrador</option>
-                                                <option value="Instructor">Instructor</option>
-                                                <option value="Aprendiz">Aprendiz</option>
-                                            </select>
-                                            <label for="tipoUsuarioLogin"><i class="fas fa-user-tag me-2"></i>Rol</label>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
-                                            <button type="submit" class="btn btn-primary form-control">
-                                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer text-center py-3">
-                                    <div class="small mb-2">¿No tienes una cuenta?</div>
-                                    <button id="btnRegistro" class="btn btn-register">
-                                        <i class="fas fa-user-plus me-2"></i>Registrarse
-                                    </button>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-xl-4 col-lg-5 col-md-7">
+                <div class="text-center mb-4">
+                    <div class="icon-circle rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-3" style="width: 65px; height: 65px;">
+                        <i class="fas fa-tasks fa-2x text-white"></i>
+                    </div>
+                    <h1 class="h2 fw-bold text-white mb-1">BACKLOG ADSO</h1>
+                    <p class="text-white opacity-75 mb-0 small">Sistema de Gestiónes</p>
+                </div>
+                <div class="card login-card border-0 shadow-lg rounded-3">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="text-center mb-4 fw-semibold text-dark">Iniciar Sesión</h5>
+                        <form action="../controller/controllerLogin.php" method="post">
+                            <div class="mb-3">
+                                <label for="usuarioLogin" class="form-label small fw-semibold text-secondary">Usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-user text-secondary"></i>
+                                    </span>
+                                    <input class="form-control border-start-0 ps-0" id="usuarioLogin" type="text" placeholder="Ingresa tu usuario" name="usuarioLogin" required />
                                 </div>
                             </div>
-                        </div>
+                            <div class="mb-3">
+                                <label for="passLogin" class="form-label small fw-semibold text-secondary">Contraseña</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-lock text-secondary"></i>
+                                    </span>
+                                    <input class="form-control border-start-0 ps-0" id="passLogin" type="password" placeholder="Ingresa tu contraseña" name="passLogin" required />
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="tipoUsuarioLogin" class="form-label small fw-semibold text-secondary">Rol</label>
+                                <select class="form-select" id="tipoUsuarioLogin" name="tipoUsuarioLogin" required>
+                                    <option selected value="nada">Selecciona tu rol</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Instructor">Instructor</option>
+                                    <option value="Aprendiz">Aprendiz</option>
+                                </select>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-login text-white py-2 fw-semibold">Ingresar</button>
+                            </div>
+                        </form>
+                        <hr class="my-4">
                     </div>
                 </div>
-            </main>
-        </div>
-        <div id="layoutAuthentication_footer">
-            <footer class="py-4 mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex align-items-center justify-content-between small flex-wrap">
-                        <div class="text-muted mb-2 mb-md-0">
-                            <i class="far fa-copyright me-1"></i>ADSO 3064749 / 2025
-                        </div>
-                        <div>
-                            <button class="btn btn-link" id="politicaPrivacidad">Política &amp; Privacidad</button>
-                            <span class="text-white-50">&middot;</span>
-                            <button class="btn btn-link" id="terminosCondiciones">Términos &amp; Condiciones</button>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            </div>
         </div>
     </div>
     
