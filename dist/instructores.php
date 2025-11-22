@@ -102,10 +102,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                 Administradores
                             </a>
-                            <a class="nav-link collapsed" href="cursos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                                Cursos
-                            </a>
+
                             <a class="nav-link collapsed" href="aprendices.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
@@ -116,6 +113,10 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                             $_SESSION["tipoUsuario"] == "Administrador"
                             || $_SESSION["tipoUsuario"] == "Instructor"
                         ): ?>
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
+                            </a>
                             <a class="nav-link collapsed" href="instructores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                                 Instructores

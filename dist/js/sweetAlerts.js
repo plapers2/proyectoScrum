@@ -958,12 +958,12 @@ async function contenidoPoliticaPrivacidad() {
     try {
         //? Texto a mostrar
         const text = `
-        En BibliotecaADSO, respetamos tu privacidad.
+        En BackLog - Adso, respetamos tu privacidad.
         Los datos personales que puedas proporcionar (como nombre o correo electrónico) se usarán únicamente para responder consultas o mejorar el servicio.
         Usamos cookies solo para fines estadísticos y de personalización.
         No compartimos tu información con terceros.
-        Puedes solicitar en cualquier momento la eliminación o modificación de tus datos escribiendo a contacto@bibliotecaadso.com
-        Última actualización: 28 de octubre de 2025.
+        Puedes solicitar en cualquier momento la eliminación o modificación de tus datos escribiendo a contacto@backlogadso.com
+        Última actualización: 11 de noviembre de 2025.
         `;
         //? Inicio Formulario
         const form = crearForm();
@@ -989,7 +989,7 @@ async function contenidoPoliticaPrivacidad() {
 async function contenidoTerminosCondiciones() {
     try {
         //? Texto a mostrar
-        const text = `El acceso y uso de BibliotecaADSO implica la aceptación de estos términos. 
+        const text = `El acceso y uso de BackLog - Adso implica la aceptación de estos términos. 
         El contenido de esta página es únicamente con fines informativos y educativos.
         No se permite la reproducción o distribución del material sin autorización del autor o fuente original.
         No garantizamos la disponibilidad continua del sitio ni nos hacemos responsables por el uso indebido del contenido.

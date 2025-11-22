@@ -104,7 +104,52 @@ async function traerDatosCursoInstructoresPorID(id) {
         return false;
     }
 }
-//TODO Fin Funcion Traer Traer Datos Curso Instructores (por id)
+//TODO Fin Funcion Traer Datos Curso Instructores (por id)
+// #endregion
+
+// #region //* Traer Datos Instructores
+//TODO Inicio Funcion Traer Datos Instructores
+async function traerDatosInstructores() {
+    try {
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/instructores/controllerDatosInstructores.php`, {
+            method: 'POST',
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Datos Instructores
+// #endregion
+
+// #region //* Traer Datos CursosHasInstructores
+//TODO Inicio Funcion Traer Datos CursosHasInstructores
+async function traerDatosCursosHasInstructoresPorID(id) {
+    try {
+        const formData = new FormData();
+        formData.append('id', id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../controller/cursos/controllerDatosCursosHasInstructoresPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Datos CursosHasInstructores
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -336,6 +381,30 @@ function crearLi(text) {
 //TODO Fin Crear Lista
 // #endregion
 
+// #region //* Crear TextArea
+//TODO Inicio Crear TextArea
+function crearTextArea(id, text) {
+    try {
+        let divContenedor = document.createElement('div');
+        divContenedor.classList.add('form-floating');
+        //? Creacion de elemento DivForm
+        let textArea = document.createElement('textarea');
+        textArea.classList.add('form-control');
+        textArea.setAttribute('style', 'height: 150px');
+        textArea.setAttribute('id', id);
+        textArea.textContent = text;
+        //? Retorno de elemento
+        divContenedor.append(textArea);
+        return divContenedor;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Crear TextArea
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Definicion de Funciones createElement
 //! /////////////////////////////////////////////////////////
@@ -362,9 +431,9 @@ async function contenidoCursoInsertar() {
         //? Descripcion
         const descripcionDiv = crearDivForm();
         const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
-        const descripcionInput = crearInputForm('descripcionCurso', 'text', '');
+        const descripcionTextArea = crearTextArea('descripcionCurso', '');
         descripcionDiv.append(descripcionLabel);
-        descripcionDiv.append(descripcionInput);
+        descripcionDiv.append(descripcionTextArea);
         //? Asignacion final Form
         form.append(nombreDiv);
         form.append(descripcionDiv);
@@ -390,15 +459,15 @@ async function contenidoCursoEditar(id) {
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreCurso', 'Nombre');
-        const nombreInput = crearInputForm('nombreCurso', 'text', datosCurso.nombre_curso);
+        const nombreInput = crearInputForm('nombreCurso', 'text', datosCurso[0].nombre_curso);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Descripcion
         const descripcionDiv = crearDivForm();
         const descripcionLabel = crearLabelForm('descripcionCurso', 'Descripcion');
-        const descripcionInput = crearInputForm('descripcionCurso', 'text', datosCurso.descripcion_curso);
+        const descripcionTextArea = crearTextArea('descripcionCurso', datosCurso[0].descripcion_curso);
         descripcionDiv.append(descripcionLabel);
-        descripcionDiv.append(descripcionInput);
+        descripcionDiv.append(descripcionTextArea);
         //? Asignacion final Form
         form.append(nombreDiv);
         form.append(descripcionDiv);
@@ -423,7 +492,7 @@ async function contenidoCursoActivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el Curso ${curso.nombre_curso} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el Curso ${curso[0].nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -448,7 +517,7 @@ async function contenidoCursoDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el Curso ${curso.nombre_curso} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el Curso ${curso[0].nombre_curso} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -491,21 +560,31 @@ async function contenidoCursoVerAprendices(id) {
 
 // #region //* Contenido Curso Ver Instructores
 //TODO Inicio Contenido Curso Ver Instructores
-async function contenidoCursoVerInstructores(id) {
+async function contenidoCursoVerInstructores(id, estado) {
     try {
         //? Se traen datos de usuario por ID
         const aprendices = await traerDatosCursoInstructoresPorID(id);
+        const curso = await traerDatosCursoPorID(id);
+        const contenedorMain = crearDivForm();
         const div = crearDivPersonalizado('', 'border', 'rounded', 'p-2', 'mt-2', 'bg-light', 'text-start');
         if (aprendices.length > 0) {
             aprendices.forEach((element) => {
-                const li = crearLi(element.nombre_aprendiz + ' ' + element.apellido_aprendiz);
+                const li = crearLi(element.nombre_instructor + ' ' + element.apellido_instructor);
+                li.setAttribute('id', element.id_instructor);
                 div.append(li);
             });
         } else {
             const li = crearLi('No hay ningun instructor asociado a este curso!');
             div.append(li);
         }
-        return div;
+        contenedorMain.append(div);
+        if (estado == 'Activo') {
+            const button = crearButton('button', 'Editar instructores asociados');
+            button.setAttribute('class', 'btn btn-success mt-4 btn-sm');
+            button.setAttribute('onclick', 'sweetCursoAsociarInstructores(' + curso[0].id_curso + ')');
+            contenedorMain.append(button);
+        }
+        return contenedorMain;
     } catch (e) {
         //? Control de errores
         console.log(e);
@@ -513,6 +592,51 @@ async function contenidoCursoVerInstructores(id) {
     }
 }
 //TODO Fin Contenido Curso Ver Aprendices
+// #endregion
+
+// #region //* Contenido Curso Asociar Instructores
+//TODO Inicio Contenido Curso Asociar Instructores
+async function contenidoAsociarInstructoresCursos(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const instructores = await traerDatosInstructores();
+        const instructoresSelect = await traerDatosCursosHasInstructoresPorID(id);
+        //? Se inicializa el form
+        const form = crearForm();
+        //? CheckBox Instructores
+        for (let i = 0; i < instructores.length; i++) {
+            const divCheckBox = crearDivPersonalizado('', 'form-check', 'text-start');
+            const input = crearInputForm('Instructor' + (i + 1), 'checkbox', instructores[i].id_instructor);
+            input.removeAttribute('class');
+            input.classList.add('form-check-input');
+            input.setAttribute('name', 'opciones');
+            for (let j = 0; j < instructoresSelect.length; j++) {
+                if (instructoresSelect[j].instructores_id_instructor == instructores[i].id_instructor) {
+                    input.setAttribute('checked', 'checked');
+                    instructoresSelect[j] = '';
+                }
+            }
+            divCheckBox.append(input);
+            const label = crearLabelForm(
+                'Instructor' + (i + 1),
+                instructores[i].nombre_instructor + ' ' + instructores[i].apellido_instructor,
+            );
+            label.removeAttribute('class');
+            label.classList.add('form-check-label');
+
+            divCheckBox.append(label);
+            //? Asignacion final Form
+            form.append(divCheckBox);
+        }
+
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Curso Asociar Instructores
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -809,15 +933,109 @@ async function sweetCursoVerAprendices(id) {
 
 // #region //* Sweet Curso Ver Instructores
 //TODO Inicio SweetAlert Curso Ver Instructores
-async function sweetCursoVerInstructores(id) {
+async function sweetCursoVerInstructores(id, estado) {
     try {
         Swal.fire({
             title: 'Instructores Asociados',
-            html: await contenidoCursoVerInstructores(id),
+            html: await contenidoCursoVerInstructores(id, estado),
             showConfirmButton: false,
             showCancelButton: true,
             cancelButtonText: 'Cerrar',
             cancelButtonColor: '#6c757d',
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Curso Ver Instructores
+// #endregion
+
+// #region //* Sweet Curso Asociar Instructores
+//TODO Inicio SweetAlert Curso Ver Instructores
+async function sweetCursoAsociarInstructores(id) {
+    try {
+        Swal.fire({
+            title: 'Instructores Asociados',
+            html: await contenidoAsociarInstructoresCursos(id),
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: () => {
+                //? Se capturan todos los input con 'name: "opciones"', y se filtran los checked
+                const opciones = document.querySelectorAll('input[name="opciones"]:checked');
+                return {
+                    opciones,
+                    idCurso: id,
+                };
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const datos = result.value;
+                const formDataPivoteEliminar = new FormData();
+                formDataPivoteEliminar.append('id', datos.idCurso);
+                const jsonPivoteEliminar = await fetch('../controller/cursos/controllerCursoEliminarInstructores.php', {
+                    method: 'POST',
+                    body: formDataPivoteEliminar,
+                });
+                const responsePivoteEliminar = jsonPivoteEliminar.json();
+                if (responsePivoteEliminar.success == false) {
+                    Swal.fire({
+                        title: '¡Error!',
+                        text: responsePivoteEliminar.message,
+                        icon: 'error',
+                        confirmButtonColor: '#28a745',
+                    }).then(() => {
+                        location.reload();
+                    });
+                    return false;
+                }
+                for (let i = 0; i < datos.opciones.length; i++) {
+                    //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                    let formDataPivote = new FormData();
+                    formDataPivote.append('idInstructor', datos.opciones[i].value);
+                    formDataPivote.append('idCurso', datos.idCurso);
+
+                    //? Solicitud de datos a controller
+                    const jsonPivote = await fetch('../controller/cursos/controllerCursoAsociarInstructores.php', {
+                        method: 'POST',
+                        body: formDataPivote,
+                    });
+
+                    //? Conversion a JSON valido
+                    let responsePivote = await jsonPivote.json();
+                    //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                    if (responsePivote.success == false) {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: responsePivote.message,
+                            icon: 'error',
+                            confirmButtonColor: '#007bff',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                }
+                //? Si todo sale bien se muestra un modal exitoso!
+                let textModal = '';
+                if (datos.opciones.length > 1) {
+                    textModal = '¡Instructores asociados exitosamente!';
+                } else {
+                    textModal = '¡Instructor asociado exitosamente!';
+                }
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: textModal,
+                    icon: 'success',
+                    confirmButtonColor: '#007bff',
+                }).then(() => {
+                    location.reload();
+                });
+            }
         });
     } catch (e) {
         //? Control de errores

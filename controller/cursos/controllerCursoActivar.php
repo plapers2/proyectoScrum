@@ -7,7 +7,7 @@ if (!$_SESSION) {
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$id = $_POST['id'];
+$id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
 try {
     $mysql->efectuarConsulta("UPDATE cursos SET estado_curso = 'Activo' WHERE id_curso = $id;");
     //? Retorno de datos aplicando JSON
