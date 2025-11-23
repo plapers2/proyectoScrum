@@ -422,6 +422,12 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                             <td><?= $t["fecha_limite_trabajo"]; ?></td>
                                             <td><?= $t["nombre_aprendiz"]; ?></td>
                                             <td>
+                                                <a
+                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo'] ?>"
+                                                    target="_blank"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-book"></i>
+                                                </a>
 
                                                 <button class="btn btn-sm btn-warning"
                                                     data-id="<?= $t['id_trabajo']; ?>"

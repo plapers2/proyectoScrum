@@ -19,6 +19,7 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
 
     $idInstructor = $_SESSION["idUsuario"];
 
+    // 🚀 Consulta correcta: instructor ve TODOS los trabajos de TODOS sus cursos
     $resultado = $mysql->efectuarConsulta("
         SELECT 
             t.id_trabajo,
@@ -35,10 +36,11 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
         INNER JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
         INNER JOIN cursos_has_instructores AS chi ON chi.cursos_id_curso = c.id_curso
         INNER JOIN instructores AS i ON chi.instructores_id_instructor = i.id_instructor
-        WHERE i.id_instructor = $idInstructor
+        WHERE chi.instructores_id_instructor = $idInstructor
     ");
 } else {
 
+    // Administrador ve TODO sin filtro
     $resultado = $mysql->efectuarConsulta("
         SELECT 
             t.id_trabajo,
@@ -62,20 +64,26 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     $trabajos[] = $fila;
 }
 
-$aprendices_result = $mysql->efectuarConsulta("SELECT id_aprendiz, nombre_aprendiz as nombre, apellido_aprendiz as apellido FROM aprendices");
+// Lista de aprendices
+$aprendices_result = $mysql->efectuarConsulta("
+    SELECT id_aprendiz, nombre_aprendiz as nombre, apellido_aprendiz as apellido 
+    FROM aprendices
+");
+
 $aprendices = [];
 while ($valor = $aprendices_result->fetch_assoc()) {
     $aprendices[] = $valor;
 }
-$aprendices_json = htmlspecialchars(json_encode($aprendices, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
 
-$rutas_trabajos_result = $mysql->efectuarConsulta("SELECT ruta_trabajo FROM trabajos
-                                                    WHERE id_trabajo = (SELECT MAX(id_trabajo)
-                                                    FROM trabajos) LIMIT 1");
-$rutas_trabajos = $rutas_trabajos_result->fetch_assoc();
+$aprendices_json = htmlspecialchars(
+    json_encode($aprendices, JSON_UNESCAPED_UNICODE),
+    ENT_QUOTES,
+    'UTF-8'
+);
 
 $mysql->desconectar();
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -193,9 +201,6 @@ $mysql->desconectar();
                 </ol>
                 <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
                     <div class="text-end mb-2">
-                        <a class="btn btn-primary" href="../uploads/trabajos/<?= $rutas_trabajos["ruta_trabajo"] ?>" target="_blank">
-                            <i class="bi bi-book mx-1"></i>Ver trabajo
-                        </a>
                         <button data-id="<?= $aprendices_json ?>"
                             class="btn btn-success" id="btn_registro_trabajo"><i class="bi bi-person-add mx-1"></i>Agregar</button>
                     </div>
@@ -233,6 +238,13 @@ $mysql->desconectar();
                                         <td><?= $t["fecha_subida"] ?></td>
                                         <td><?= $t["fecha_limite_trabajo"] ?></td>
                                         <td>
+                                            <a
+                                                href="../uploads/trabajos/<?= $t['ruta_trabajo'] ?>"
+                                                target="_blank"
+                                                class="btn btn-primary btn-sm">
+                                                <i class="bi bi-book"></i>
+                                            </a>
+
                                             <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
                                                 <a data-id-trabajo="<?= $t["id_trabajo"]; ?>"
                                                     class="btn btn-success btn-sm"
@@ -241,6 +253,7 @@ $mysql->desconectar();
                                                 </a>
                                             <?php endif; ?>
                                         </td>
+
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
