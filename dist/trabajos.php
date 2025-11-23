@@ -171,6 +171,8 @@ $mysql->desconectar();
                         <a class="btn btn-primary" href="../uploads/trabajos/<?= $rutas_trabajos["ruta_trabajo"] ?>" target="_blank">
                             <i class="bi bi-book mx-1"></i>Ver trabajo
                         </a>
+                        <button data-id="<?= $rutas_trabajos["ruta_trabajo"]; ?>"
+                            class="btn btn-danger" onclick="eliminarTrabajo(this)"><i class="bi bi-journal-arrow-down mx-1"></i>Eliminar</button>
                         <button data-id="<?= $aprendices_json ?>"
                             class="btn btn-success" id="btn_registro_trabajo"><i class="bi bi-person-add mx-1"></i>Agregar</button>
                     </div>
@@ -239,11 +241,11 @@ $mysql->desconectar();
 
     <!--JS trabajos-->
     <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
+        <script src="js/trabajos/agregarCalificacion.js"></script>
         <script src="./js/trabajos/agregarTrabajo.js"></script>
         <script src="./js/trabajos/eliminarTrabajo.js"></script>
     <?php endif; ?>
     <script src="js/cerrar_sesion.js"></script>
-    <script src="js/trabajos/agregarCalificacion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>

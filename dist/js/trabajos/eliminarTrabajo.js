@@ -1,7 +1,7 @@
 function eliminarTrabajo(btn) {
     const id_trabajo = btn.dataset.id;
     Swal.fire({
-        title: '¿Eliminar trabajo?',
+        title: '¿Eliminar el trabajo asignado?',
         text: 'Esta acción inactiva el usuario del sistema.',
         icon: 'warning',
         showCancelButton: true,
