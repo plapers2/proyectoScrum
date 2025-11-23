@@ -5,9 +5,9 @@ require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-/* VALIDAR SESIÓN */
-if (!isset($_SESSION['tipoUsuario'])) {
-    header('Location: login.php?error=true&message=Debes iniciar sesión primero&title=Acceso denegado');
+if (!isset($_SESSION["idUsuario"]) || empty($_SESSION["idUsuario"])) {
+    header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+    $mysql->desconectar();
     exit;
 }
 
@@ -66,6 +66,7 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Aprendices - Biblioteca ADSO</title>
 
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -90,10 +91,7 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
 
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <button class="dropdown-item text-success" 
-                            onclick="sweetConfiguracionPerfil('<?= $_SESSION['idUsuario'] ?>','<?= $_SESSION['tipoUsuario'] ?>')">
-                            <i class="bi bi-person-gear fs-3"></i> Configuración de perfil
-                        </button>
+                        <hr class="dropdown-divider" />
                     </li>
                     <li>
                         <a class="dropdown-item text-danger" id="btn_cerrar_sesion">
@@ -109,16 +107,12 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
     <div id="layoutSidenav">
 
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <nav class="sb-sidenav accordion sb-sidenav-dark">
+
                 <div class="sb-sidenav-menu">
-
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Aprendiz</div>
 
-                        <a class="nav-link" href="libros.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                            Buscar Libros
-                        </a>
+                        <div class="sb-sidenav-menu-heading">Funciones</div>
 
                         <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
                             <a class="btn nav-link collapsed"
@@ -165,30 +159,16 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                             </a>
                         <?php endif; ?>
 
-                        <a class="nav-link" href="prestamos.php">
-                            <div class="sb-nav-link-icon"><i class="fas fa-hand-holding"></i></div>
-                            Mis Préstamos
-                        </a>
                     </div>
-
                 </div>
 
-                <div class="sb-sidenav-footer">
-                    <div class="small">Logueado como:</div>
-                    <p class="text-uppercase fw-bold mb-0"><?= $_SESSION['tipoUsuario']; ?></p>
-                </div>
             </nav>
         </div>
 
         <div id="layoutSidenav_content">
-            <main class="container-fluid px-4">
-                <h1 class="mt-4">Panel de Aprendiz</h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Listado de Aprendices</li>
-                </ol>
+            <main>
 
-                <div class="card mb-4">
-                    <div class="card-header"><i class="fas fa-table me-1"></i> Aprendices Registrados</div>
+                <div class="container-fluid px-4">
 
                     <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
                         <h1 class="mt-4">Panel de aprendices</h1>
@@ -336,7 +316,9 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                             </table>
                         </div>
                     </div>
+
                 </div>
+
             </main>
 
             <footer class="py-4 bg-light mt-auto text-center small text-muted">
@@ -367,6 +349,9 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             modal.show();
         }
     </script>
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // leer parametros de la url
         const params = new URLSearchParams(window.location.search);
@@ -406,5 +391,3 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
 </body>
 
 </html>
-
-<?php $mysql->desconectar(); ?>

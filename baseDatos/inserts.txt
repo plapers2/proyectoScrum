@@ -1,4 +1,4 @@
-insert into cursos values ('','ADSO');
+insert into cursos values ('','ADSO','Activo');
 
 
 HACER DE SEGUNDO!
