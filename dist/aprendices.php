@@ -183,6 +183,85 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                             <button class="btn btn-success mb-2" id="btn_registro_instructor">
                                 <i class="bi bi-person-add"></i> Insertar aprendiz
                             </button>
+
+                            <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+                                <!-- Modal Insertar Aprendiz -->
+                                <div class="modal fade" id="modalInsertAprendiz" tabindex="-1" aria-labelledby="tituloInsertAprendiz" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+
+                                            <div class="modal-header bg-success text-white">
+                                                <h5 class="modal-title" id="tituloInsertAprendiz">Registrar nuevo aprendiz</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <form id="formInsertAprendiz">
+
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Nombre</label>
+                                                            <input type="text" class="form-control" name="nombre_aprendiz" required>
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Apellido</label>
+                                                            <input type="text" class="form-control" name="apellido_aprendiz" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Correo</label>
+                                                            <input type="email" class="form-control" name="correo_aprendiz" required>
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Contraseña</label>
+                                                            <input type="password" class="form-control" name="pass_aprendiz" required>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="row">
+
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Estado</label>
+                                                            <select class="form-control" name="estado_aprendiz" required>
+                                                                <option value="">Seleccione...</option>
+                                                                <option value="Activo">Activo</option>
+                                                                <option value="Inactivo">Inactivo</option>
+                                                                <option value="Suspendido">Suspendido</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-3">
+                                                            <label class="form-label">Curso</label>
+                                                            <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
+                                                                <option value="">Seleccione un curso</option>
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+
+                                                </form>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Cancelar
+                                                </button>
+                                                <button type="button" class="btn btn-success" id="btnGuardarAprendiz">
+                                                    Guardar aprendiz
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     <?php endif; ?>
 
@@ -394,6 +473,12 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             // eliminar parametros de la url
             window.history.replaceState({}, document.title, window.location.pathname);
         }
+    </script>
+    <script>
+        document.getElementById("btn_registro_instructor").addEventListener("click", () => {
+            let modal = new bootstrap.Modal(document.getElementById("modalInsertAprendiz"));
+            modal.show();
+        });
     </script>
     <script src="./js/aprendices/eliminarAprendiz.js"></script>
 

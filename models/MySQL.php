@@ -4,10 +4,10 @@ class MySQL
 {
 
     //! Datos de conexión
-    private $ipServidor = "bbhjjxpf2t984wp4v61z-mysql.services.clever-cloud.com"; //
-    private $usuarioBase = "u0xmlaz3mc2of6jy";
-    private $contrasena = "MOPhMg0QGXjsVNtoR2Nr";
-    private $nombreBaseDatos = "bbhjjxpf2t984wp4v61z";
+    private $ipServidor = "localhost";  // ← CAMBIADO
+    private $usuarioBase = "root";      // ← usuario por defecto
+    private $contrasena = "";           // ← normalmente vacío
+    private $nombreBaseDatos = "scrum";  // ← cámbialo por tu base
 
     private $conexion;
 
