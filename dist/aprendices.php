@@ -226,7 +226,15 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                                         onclick="editarPerfil(this)">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </button>
+                                                    <button class="btn btn-sm btn-danger"
+                                                        data-id="<?= $a["id_aprendiz"]; ?>"
+                                                        onclick="eliminarAprendiz(this)">
+                                                        <i class="bi bi-person-x-fill"></i>
+                                                    </button>
+
                                                 </td>
+
+
 
                                             </tr>
                                         <?php endforeach; ?>
@@ -349,9 +357,6 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             modal.show();
         }
     </script>
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         // leer parametros de la url
         const params = new URLSearchParams(window.location.search);
@@ -385,9 +390,54 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>
+    <script>
+        function eliminarAprendiz(btn) {
+            let id = btn.getAttribute("data-id");
 
+            Swal.fire({
+                title: "¿Eliminar aprendiz?",
+                text: "Esta accion no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
 
+                    let formData = new FormData();
+                    formData.append("id_aprendiz", id);
 
+                    fetch("../controller/aprendices/eliminar aprendizes.php", {
+                            method: "POST",
+                            body: formData
+                        })
+                        .then(r => r.text())
+                        .then(res => {
+                            if (res.trim() === "ok") {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Eliminado",
+                                    text: "El aprendiz ha sido eliminado",
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "No se pudo eliminar"
+                                });
+                            }
+                        });
+
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

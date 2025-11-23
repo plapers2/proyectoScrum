@@ -98,31 +98,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                         </a>';
                         };
                         ?>
-                        <div class="sb-sidenav-menu-heading">Libros</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Gestión de Libros
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="libros.php">Búsqueda de Libros</a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReservas"
-                                    aria-expanded="true" aria-controls="collapseReservas">
-                                    Reservas
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-
-                                <div class="collapse" id="collapseReservas" data-bs-parent="#collapseLibros">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="reservasPendientes.php">Reservas Pendientes</a>
-                                        <a class="nav-link" href="reservasHistorial.php">Historial de Reservas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="prestamos.php">Préstamos</a>
-                            </nav>
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
