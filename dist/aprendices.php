@@ -393,13 +393,12 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                             <td><?= $t["fecha_limite_trabajo"]; ?></td>
                                             <td><?= $t["nombre_aprendiz"]; ?></td>
                                             <td>
-                                                <?php if ($t["calificacion_trabajo"] == ""): ?>
-                                                    <button class="btn btn-sm btn-warning"
-                                                        data-id="<?= $t['id_trabajo']; ?>"
-                                                        onclick="editarRutaTrabajo(this)">
-                                                        <i class="bi bi-journal-arrow-up"></i>
-                                                    </button>
-                                                <?php endif; ?>
+
+                                                <button class="btn btn-sm btn-warning"
+                                                    data-id="<?= $t['id_trabajo']; ?>"
+                                                    onclick="editarRutaTrabajo(this)">
+                                                    <i class="bi bi-journal-arrow-up"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
