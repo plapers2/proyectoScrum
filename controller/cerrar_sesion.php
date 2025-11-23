@@ -11,6 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["accion"]) && $_POST["
     exit;
 } else {
     // Si alguien entra sin permiso, redirigir al login
-    header("Location: login.php");
+    header("Location: ../../login.php");
     exit;
 }

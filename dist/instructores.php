@@ -81,61 +81,65 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <nav class="sb-sidenav accordion sb-sidenav-dark">
+
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Funcionalidades</div>
-                        <!-- Editar Perfil -->
+
+                        <div class="sb-sidenav-menu-heading">Funciones</div>
+
                         <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
-                            <a data-id="<?= $_SESSION["idUsuario"]; ?>"
+                            <a class="btn nav-link collapsed"
+                                data-id="<?= $_SESSION["idUsuario"]; ?>"
                                 data-nombre="<?= $_SESSION["nombreUsuario"]; ?>"
                                 data-apellido="<?= $_SESSION["apellidoUsuario"]; ?>"
                                 data-correo="<?= $_SESSION["emailUsuario"]; ?>"
-                                class="btn nav-link collapsed" onclick="editarPerfil(this)">
+                                onclick="editarPerfil(this)">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
-                                Editar Perfil
+                                Editar perfil
                             </a>
                         <?php endif; ?>
 
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
+
                             <a class="nav-link collapsed" href="administradores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                 Administradores
+                            </a>
+
+                            <a class="nav-link collapsed" href="cursos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+                                Cursos
                             </a>
 
                             <a class="nav-link collapsed" href="aprendices.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
                             </a>
+                            <a class="nav-link collapsed" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
+                                trabajos
+                            </a>
+
                         <?php endif; ?>
 
-                        <?php if (
-                            $_SESSION["tipoUsuario"] == "Administrador"
-                            || $_SESSION["tipoUsuario"] == "Instructor"
-                        ): ?>
-                            <a class="nav-link collapsed" href="cursos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                                Cursos
-                            </a>
+                        <?php if ($_SESSION["tipoUsuario"] == "Administrador" || $_SESSION["tipoUsuario"] == "Instructor"): ?>
                             <a class="nav-link collapsed" href="instructores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                                 Instructores
                             </a>
                         <?php endif; ?>
 
-                        <?php if (
-                            $_SESSION["tipoUsuario"] == "Instructor"
-                            || $_SESSION["tipoUsuario"] == "Aprendiz"
-                        ): ?>
+                        <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
                             <a class="nav-link collapsed" href="trabajos.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
                         <?php endif; ?>
+
                     </div>
                 </div>
-                <div class="sb-sidenav-footer">
-                </div>
+
             </nav>
         </div>
         <!-- Contenido principal -->
