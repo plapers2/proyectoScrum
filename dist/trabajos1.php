@@ -15,33 +15,13 @@ if ($_SESSION["tipoUsuario"] != "Administrador" && $_SESSION["tipoUsuario"] != "
     exit;
 }
 
-if ($_SESSION["tipoUsuario"] == "Instructor") {
-
-    $idInstructor = $_SESSION["idUsuario"];
-
-    $resultado = $mysql->efectuarConsulta("
-        SELECT 
-            t.id_trabajo,
-            t.calificacion_trabajo,
-            t.comentario_trabajo,
-            t.fecha_subida,
-            t.fecha_limite_trabajo,
-            t.ruta_trabajo,
-            a.nombre_aprendiz,
-            c.nombre_curso,
-            i.nombre_instructor
-        FROM trabajos AS t
-        INNER JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
-        INNER JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
-        INNER JOIN cursos_has_instructores AS chi ON chi.cursos_id_curso = c.id_curso
-        INNER JOIN instructores AS i ON chi.instructores_id_instructor = i.id_instructor
-        WHERE i.id_instructor = $idInstructor
-    ");
-} else {
+/* ============================
+   CONSULTA PARA ADMINISTRADOR
+   ============================ */
+if ($_SESSION["tipoUsuario"] == "Administrador") {
 
     $resultado = $mysql->efectuarConsulta("
         SELECT 
-            t.id_trabajo,
             t.calificacion_trabajo,
             t.comentario_trabajo,
             t.fecha_subida,
@@ -54,6 +34,33 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
         LEFT JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
         LEFT JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
         LEFT JOIN instructores AS i ON t.instructores_id_instructor = i.id_instructor
+        ORDER BY t.fecha_subida DESC
+    ");
+}
+
+/* ============================
+   CONSULTA PARA INSTRUCTOR
+   ============================ */
+if ($_SESSION["tipoUsuario"] == "Instructor") {
+
+    $idInstructor = $_SESSION["idUsuario"];
+
+    $resultado = $mysql->efectuarConsulta("
+        SELECT 
+            t.calificacion_trabajo,
+            t.comentario_trabajo,
+            t.fecha_subida,
+            t.fecha_limite_trabajo,
+            t.ruta_trabajo,
+            a.nombre_aprendiz,
+            c.nombre_curso,
+            i.nombre_instructor
+        FROM trabajos AS t
+        INNER JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
+        INNER JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
+        INNER JOIN instructores AS i ON t.instructores_id_instructor = i.id_instructor
+        WHERE i.id_instructor = $idInstructor
+        ORDER BY t.fecha_subida DESC
     ");
 }
 
@@ -61,18 +68,6 @@ $trabajos = [];
 while ($fila = mysqli_fetch_assoc($resultado)) {
     $trabajos[] = $fila;
 }
-
-$aprendices_result = $mysql->efectuarConsulta("SELECT id_aprendiz, nombre_aprendiz as nombre, apellido_aprendiz as apellido FROM aprendices");
-$aprendices = [];
-while ($valor = $aprendices_result->fetch_assoc()) {
-    $aprendices[] = $valor;
-}
-$aprendices_json = htmlspecialchars(json_encode($aprendices, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
-
-$rutas_trabajos_result = $mysql->efectuarConsulta("SELECT ruta_trabajo FROM trabajos
-                                                    WHERE id_trabajo = (SELECT MAX(id_trabajo)
-                                                    FROM trabajos) LIMIT 1");
-$rutas_trabajos = $rutas_trabajos_result->fetch_assoc();
 
 $mysql->desconectar();
 ?>
@@ -92,7 +87,7 @@ $mysql->desconectar();
 
 <body class="sb-nav-fixed">
 
-    <!-- NAVBAR ORIGINAL -->
+    <!-- NAVBAR -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <button class="btn btn-link btn-sm" id="sidebarToggle">
             <i class="fas fa-bars"></i>
@@ -118,68 +113,39 @@ $mysql->desconectar();
     </nav>
 
     <div id="layoutSidenav">
-
-        <!-- SIDEBAR ORIGINAL -->
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark">
-
                 <div class="sb-sidenav-menu">
                     <div class="nav">
 
                         <div class="sb-sidenav-menu-heading">Funciones</div>
 
-                        <?php if ($_SESSION["tipoUsuario"] == "Aprendiz"): ?>
-                            <a class="btn nav-link collapsed"
-                                data-id="<?= $_SESSION["idUsuario"]; ?>"
-                                data-nombre="<?= $_SESSION["nombreUsuario"]; ?>"
-                                data-apellido="<?= $_SESSION["apellidoUsuario"]; ?>"
-                                data-correo="<?= $_SESSION["emailUsuario"]; ?>"
-                                onclick="editarPerfil(this)">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
-                                Editar perfil
-                            </a>
-                        <?php endif; ?>
-
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-
                             <a class="nav-link collapsed" href="administradores.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
-                                Administradores
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div> Administradores
                             </a>
-
                             <a class="nav-link collapsed" href="cursos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                                Cursos
+                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div> Cursos
                             </a>
-
                             <a class="nav-link collapsed" href="aprendices.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
-                                Aprendices
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div> Aprendices
+                            </a>
+                            <a class="nav-link collapsed" href="instructores.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div> Instructores
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
-                                trabajos
-                            </a>
-
-                        <?php endif; ?>
-
-                        <?php if ($_SESSION["tipoUsuario"] == "Administrador" || $_SESSION["tipoUsuario"] == "Instructor"): ?>
-                            <a class="nav-link collapsed" href="instructores.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                                Instructores
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div> Trabajos
                             </a>
                         <?php endif; ?>
 
                         <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                                Trabajos
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div> Trabajos
                             </a>
                         <?php endif; ?>
 
                     </div>
                 </div>
-
             </nav>
         </div>
 
@@ -191,15 +157,6 @@ $mysql->desconectar();
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item active">Trabajos registrados</li>
                 </ol>
-                <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-                    <div class="text-end mb-2">
-                        <a class="btn btn-primary" href="../uploads/trabajos/<?= $rutas_trabajos["ruta_trabajo"] ?>" target="_blank">
-                            <i class="bi bi-book mx-1"></i>Ver trabajo
-                        </a>
-                        <button data-id="<?= $aprendices_json ?>"
-                            class="btn btn-success" id="btn_registro_trabajo"><i class="bi bi-person-add mx-1"></i>Agregar</button>
-                    </div>
-                <?php endif; ?>
 
                 <div class="card mb-4">
                     <div class="card-header d-flex">
@@ -233,13 +190,9 @@ $mysql->desconectar();
                                         <td><?= $t["fecha_subida"] ?></td>
                                         <td><?= $t["fecha_limite_trabajo"] ?></td>
                                         <td>
-                                            <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-                                                <a data-id-trabajo="<?= $t["id_trabajo"]; ?>"
-                                                    class="btn btn-success btn-sm"
-                                                    onclick="agregarCalificacion(this)">
-                                                    <i class="bi bi-journal-check"></i>
-                                                </a>
-                                            <?php endif; ?>
+                                            <button class="btn btn-sm btn-info">
+                                                <i class="bi bi-file-check"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -251,24 +204,14 @@ $mysql->desconectar();
 
             </main>
 
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4">
-                    <div class="d-flex justify-content-center small">
-                        <div class="text-muted">Realizado por <span style="color: blueviolet;">CodeÁngels</span></div>
-                    </div>
-                </div>
+            <footer class="py-4 bg-light mt-auto text-center small text-muted">
+                Realizado por CodeAngels
             </footer>
 
         </div>
     </div>
 
-    <!--JS trabajos-->
-    <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-        <script src="./js/trabajos/agregarTrabajo.js"></script>
-        <script src="./js/trabajos/eliminarTrabajo.js"></script>
-    <?php endif; ?>
     <script src="js/cerrar_sesion.js"></script>
-    <script src="js/trabajos/agregarCalificacion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>
