@@ -33,24 +33,53 @@ $aprendices = [];
 while ($fila = mysqli_fetch_assoc($resultado)) {
     $aprendices[] = $fila;
 }
-$resultadoTrabajos = $mysql->efectuarConsulta("
-    SELECT 
-        trabajos.id_trabajo,
-        instructores.nombre_instructor,
-        instructores.apellido_instructor,
-        instructores.estado_instructor,
-        trabajos.calificacion_trabajo,
-        trabajos.ruta_trabajo,
-        trabajos.comentario_trabajo,
-        trabajos.fecha_limite_trabajo,
-        aprendices.nombre_aprendiz
-    FROM instructores
-    LEFT JOIN trabajos 
-        ON trabajos.instructores_id_instructor = instructores.id_instructor
-    LEFT JOIN aprendices
-        ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
-    WHERE trabajos.aprendices_id_aprendiz = $id
-");
+$resultadoTrabajos = null;
+
+if ($_SESSION["tipoUsuario"] == "Administrador") {
+
+    // ADMINISTRADOR: ver todos los trabajos
+    $resultadoTrabajos = $mysql->efectuarConsulta("
+        SELECT 
+            trabajos.id_trabajo,
+            instructores.nombre_instructor,
+            instructores.apellido_instructor,
+            instructores.estado_instructor,
+            trabajos.calificacion_trabajo,
+            trabajos.ruta_trabajo,
+            trabajos.comentario_trabajo,
+            trabajos.fecha_limite_trabajo,
+            aprendices.nombre_aprendiz
+        FROM trabajos
+        INNER JOIN instructores 
+            ON trabajos.instructores_id_instructor = instructores.id_instructor
+        INNER JOIN aprendices
+            ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+    ");
+}
+
+if ($_SESSION["tipoUsuario"] == "Aprendiz") {
+
+    // APRENDIZ: ver solo los propios
+    $resultadoTrabajos = $mysql->efectuarConsulta("
+        SELECT 
+            trabajos.id_trabajo,
+            instructores.nombre_instructor,
+            instructores.apellido_instructor,
+            instructores.estado_instructor,
+            trabajos.calificacion_trabajo,
+            trabajos.ruta_trabajo,
+            trabajos.comentario_trabajo,
+            trabajos.fecha_limite_trabajo,
+            aprendices.nombre_aprendiz
+        FROM trabajos
+        INNER JOIN instructores 
+            ON trabajos.instructores_id_instructor = instructores.id_instructor
+        INNER JOIN aprendices
+            ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+        WHERE trabajos.aprendices_id_aprendiz = $id
+    ");
+}
+
 
 
 $trabajos = [];
