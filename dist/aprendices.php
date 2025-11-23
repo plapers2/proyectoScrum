@@ -142,6 +142,10 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
                             </a>
+                            <a class="nav-link collapsed" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
+                                trabajos
+                            </a>
 
                         <?php endif; ?>
 
@@ -390,54 +394,8 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>
-    <script>
-        function eliminarAprendiz(btn) {
-            let id = btn.getAttribute("data-id");
+    <script src="./js/aprendices/eliminarAprendiz.js"></script>
 
-            Swal.fire({
-                title: "¿Eliminar aprendiz?",
-                text: "Esta accion no se puede deshacer",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Sí, eliminar",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    let formData = new FormData();
-                    formData.append("id_aprendiz", id);
-
-                    fetch("../controller/aprendices/eliminar aprendizes.php", {
-                            method: "POST",
-                            body: formData
-                        })
-                        .then(r => r.text())
-                        .then(res => {
-                            if (res.trim() === "ok") {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Eliminado",
-                                    text: "El aprendiz ha sido eliminado",
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                }).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: "No se pudo eliminar"
-                                });
-                            }
-                        });
-
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>
