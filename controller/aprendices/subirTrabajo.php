@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $trabajo = mysqli_fetch_assoc($resultado);
     $fecha_limite = $trabajo['fecha_limite_trabajo'];
-    $ruta_anterior = $trabajo['ruta_trabajo'];
+    $ruta_anterior = $trabajo['ruta_trabajo_aprendiz'];
 
     // verificar fecha limite
     $fecha_actual = date('Y-m-d H:i:s');
