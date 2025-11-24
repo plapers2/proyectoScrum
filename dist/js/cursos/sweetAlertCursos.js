@@ -747,9 +747,18 @@ async function sweetCursoEditar(id) {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreCurso').value.trim();
                 const descripcion = document.querySelector('#descripcionCurso').value.trim();
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
                 //? Verificar que los campos esten llenos
                 if (!nombre || !descripcion) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
+                    return false;
+                }
+                if (!regex.test(nombre)) {
+                    Swal.showValidationMessage('El nombre del curso debe ser válido.');
+                    return false;
+                }
+                if (!regex.test(descripcion)) {
+                    Swal.showValidationMessage('La descripción del curso debe ser válida.');
                     return false;
                 }
                 //? Retornar valores finales
