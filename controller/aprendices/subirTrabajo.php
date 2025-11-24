@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // verificar trabajo
-    $consulta_trabajo = "SELECT fecha_limite_trabajo, ruta_trabajo 
+    $consulta_trabajo = "SELECT fecha_limite_trabajo, ruta_trabajo_instructor
                          FROM trabajos 
                          WHERE id_trabajo = $id_trabajo 
                          AND aprendices_id_aprendiz = $id_aprendiz";
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ruta_completa_escapada = addslashes($ruta_completa);
 
         $consulta_actualizar = "UPDATE trabajos 
-                                SET ruta_trabajo = '$ruta_completa_escapada' 
+                                SET ruta_trabajo_aprendiz = '$ruta_completa_escapada' 
                                 WHERE id_trabajo = $id_trabajo 
                                 AND aprendices_id_aprendiz = $id_aprendiz";
 

@@ -5,9 +5,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["accion"]) && $_POST["
     // Destruir sesión correctamente
     session_unset();
     session_destroy();
-
+    header('Location: ../../login.php');
     // Confirmar al JS que se cerró correctamente
-    echo "ok";
+    // echo "ok";
     exit;
 } else {
     // Si alguien entra sin permiso, redirigir al login

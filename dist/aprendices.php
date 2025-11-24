@@ -40,15 +40,7 @@ if ($_SESSION["tipoUsuario"] == "Administrador") {
     // ADMINISTRADOR: ver todos los trabajos
     $resultadoTrabajos = $mysql->efectuarConsulta("
         SELECT 
-            trabajos.id_trabajo,
-            instructores.nombre_instructor,
-            instructores.apellido_instructor,
-            instructores.estado_instructor,
-            trabajos.calificacion_trabajo,
-            trabajos.ruta_trabajo_instructor,
-            trabajos.comentario_trabajo,
-            trabajos.fecha_limite_trabajo,
-            aprendices.nombre_aprendiz
+            *
         FROM trabajos
         INNER JOIN instructores 
             ON trabajos.instructores_id_instructor = instructores.id_instructor
@@ -62,15 +54,7 @@ if ($_SESSION["tipoUsuario"] == "Aprendiz") {
     // APRENDIZ: ver solo los propios
     $resultadoTrabajos = $mysql->efectuarConsulta("
         SELECT 
-            trabajos.id_trabajo,
-            instructores.nombre_instructor,
-            instructores.apellido_instructor,
-            instructores.estado_instructor,
-            trabajos.calificacion_trabajo,
-            trabajos.ruta_trabajo_instructor,
-            trabajos.comentario_trabajo,
-            trabajos.fecha_limite_trabajo,
-            aprendices.nombre_aprendiz
+            *
         FROM trabajos
         INNER JOIN instructores 
             ON trabajos.instructores_id_instructor = instructores.id_instructor
@@ -372,7 +356,12 @@ $cursos_json = htmlspecialchars(
                                                     class="btn btn-primary btn-sm">
                                                     <i class="bi bi-book"></i>
                                                 </a>
-
+                                                <a
+                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
+                                                    target="_blank"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-journal-check"></i>
+                                                </a>
                                                 <button class="btn btn-sm btn-warning"
                                                     data-id="<?= $t['id_trabajo']; ?>"
                                                     onclick="editarRutaTrabajo(this)">

@@ -62,7 +62,7 @@ $aprendices_json = htmlspecialchars(
     ENT_QUOTES,
     'UTF-8'
 );
-$fechaActualConsulta = $mysql->efectuarConsulta("SELECT now()");
+$fechaActualConsulta = $mysql->efectuarConsulta("SELECT now() as fecha");
 $fechaActual = '';
 while ($valor = $fechaActualConsulta->fetch_assoc()) {
     $fechaActual = $valor;
@@ -231,15 +231,16 @@ $mysql->desconectar();
                                                 class="btn btn-primary btn-sm">
                                                 <i class="bi bi-book"></i>
                                             </a>
-                                            <a
-                                                href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
-                                                target="_blank"
-                                                class="btn btn-primary btn-sm">
-                                                <i class="bi bi-book"></i>
-                                            </a>
-
+                                            <?php if ($t['ruta_trabajo_aprendiz']): ?>
+                                                <a
+                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
+                                                    target="_blank"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-file-earmark-person-fill"></i>
+                                                </a>
+                                            <?php endif; ?>
                                             <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-                                                <?php if ($t['fecha_limite_trabajo'] > $fechaActual || $t['ruta_trabajo_aprendiz']): ?>
+                                                <?php if ($t['fecha_limite_trabajo'] < $fechaActual['fecha'] || $t['ruta_trabajo_aprendiz']): ?>
                                                     <a data-id-trabajo="<?= $t["id_trabajo"]; ?>"
                                                         class="btn btn-success btn-sm"
                                                         onclick="agregarCalificacion(this)">
