@@ -5,16 +5,16 @@ class MySQL
 
     //! Datos de conexión
     //? Clever Cloud
-    // private $ipServidor = "bbhjjxpf2t984wp4v61z-mysql.services.clever-cloud.com";  // <- (localhost o host)
-    // private $usuarioBase = "u0xmlaz3mc2of6jy";      // <- usuario (en local es root normalmente)
-    // private $contrasena = "MOPhMg0QGXjsVNtoR2Nr";           // <- contraseña (local no tiene normalmente, va vacio)
-    // private $nombreBaseDatos = "bbhjjxpf2t984wp4v61z";  // <- nombre de base de datos
+    private $ipServidor = "bbhjjxpf2t984wp4v61z-mysql.services.clever-cloud.com";  // <- (localhost o host)
+    private $usuarioBase = "u0xmlaz3mc2of6jy";      // <- usuario (en local es root normalmente)
+    private $contrasena = "MOPhMg0QGXjsVNtoR2Nr";           // <- contraseña (local no tiene normalmente, va vacio)
+    private $nombreBaseDatos = "bbhjjxpf2t984wp4v61z";  // <- nombre de base de datos
 
     //? Local
-    private $ipServidor = "localhost";  // <- (localhost o host)
-    private $usuarioBase = "root";      // <- usuario (en local es root normalmente)
-    private $contrasena = "";           // <- contraseña (local no tiene normalmente, va vacio)
-    private $nombreBaseDatos = "taller_scrum_bd";  // <- nombre de base de datos
+    // private $ipServidor = "localhost";  // <- (localhost o host)
+    // private $usuarioBase = "root";      // <- usuario (en local es root normalmente)
+    // private $contrasena = "";           // <- contraseña (local no tiene normalmente, va vacio)
+    // private $nombreBaseDatos = "taller_scrum_bd";  // <- nombre de base de datos
 
 
     private $conexion;

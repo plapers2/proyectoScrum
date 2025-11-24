@@ -34,7 +34,7 @@ document.querySelector('#btn_cerrar_sesion').addEventListener('click', async () 
 
                 if (resultado.trim() === 'ok') {
                     // window.href = "login.php";
-                    // location.reload();
+                    location.reload();
                 } else {
                     Swal.fire({
                         icon: 'error',

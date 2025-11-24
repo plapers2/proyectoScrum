@@ -87,6 +87,11 @@ $cursos_json = htmlspecialchars(
     'UTF-8'
 );
 
+$fechaActualConsulta = $mysql->efectuarConsulta("SELECT now() as fecha");
+$fechaActual = '';
+while ($valor = $fechaActualConsulta->fetch_assoc()) {
+    $fechaActual = $valor;
+}
 
 ?>
 <!DOCTYPE html>
