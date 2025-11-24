@@ -14,7 +14,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Login - BACKLOG ADSO</title>
+    <title>Login - Proyecto Scrum ADSO</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
@@ -33,7 +33,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                     <div class="icon-circle rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-3" style="width: 65px; height: 65px;">
                         <i class="fas fa-tasks fa-2x text-white"></i>
                     </div>
-                    <h1 class="h2 fw-bold text-white mb-1">BACKLOG ADSO</h1>
+                    <h1 class="h2 fw-bold text-white mb-1">Login</h1>
                     <p class="text-white opacity-75 mb-0 small">Sistema de Gestiónes</p>
                 </div>
                 <div class="card login-card border-0 shadow-lg rounded-3">

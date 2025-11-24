@@ -44,7 +44,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Instructores - Biblioteca ADSO</title>
+    <title>Instructores - Proyecto Scrum ADSO</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -74,7 +74,7 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" id="btn_cerrar_sesion"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
                 </ul>
             </li>
         </ul>

@@ -30,10 +30,10 @@ document.querySelector('#btn_cerrar_sesion').addEventListener('click', async () 
                 });
 
                 const resultado = await respuesta.text();
-                console.log(resultado);
+                // console.log(resultado);
 
                 if (resultado.trim() === 'ok') {
-                    // window.href = "login.php";
+                    window.href = "login.php";
                     location.reload();
                 } else {
                     Swal.fire({
@@ -41,7 +41,7 @@ document.querySelector('#btn_cerrar_sesion').addEventListener('click', async () 
                         title: 'Error al cerrar sesión',
                         text: 'Inténtalo de nuevo.',
                     });
-                    console.error(resultado);
+                    // console.error(resultado);
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);

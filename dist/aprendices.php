@@ -46,7 +46,7 @@ if ($_SESSION["tipoUsuario"] == "Administrador") {
             ON trabajos.instructores_id_instructor = instructores.id_instructor
         INNER JOIN aprendices
             ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
-            WHERE instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo'
+            WHERE instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo' ORDER BY trabajos.fecha_subida DESC
     ");
 }
 
@@ -61,7 +61,7 @@ if ($_SESSION["tipoUsuario"] == "Aprendiz") {
             ON trabajos.instructores_id_instructor = instructores.id_instructor
         INNER JOIN aprendices
             ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
-        WHERE trabajos.aprendices_id_aprendiz = $id AND instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo'
+        WHERE trabajos.aprendices_id_aprendiz = $id AND instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo'  ORDER BY trabajos.fecha_subida DESC
     ");
 }
 
@@ -102,7 +102,7 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Aprendices - Biblioteca ADSO</title>
+    <title>Aprendices - Proyecto Scrum ADSO</title>
 
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -114,30 +114,29 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
 <body class="sb-nav-fixed">
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-
-        <button class="btn btn-link btn-sm" id="sidebarToggle">
+        <!-- Navbar Brand -->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
+        <!-- Sidebar Toggle -->
 
-        <ul class="navbar-nav ms-auto me-3 me-lg-4">
+        <!-- Buscador superior -->
+        <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        </div>
+        <!-- Dropdown usuario -->
+        <ul class="navbar-nav ms-100 ms-md-0 me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
-
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li>
-                        <a class="dropdown-item text-danger" id="btn_cerrar_sesion">
-                            <i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar sesion
-                        </a>
-                    </li>
+                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
                 </ul>
             </li>
         </ul>
-
     </nav>
 
     <div id="layoutSidenav">
@@ -337,7 +336,6 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                                         <th>Apellido instructor</th>
                                         <th>Estado instructor</th>
                                         <th>calificacion_trabajo</th>
-                                        <th>Ruta archivo</th>
                                         <th>Comentario trabajo</th>
                                         <th>Fecha limite</th>
                                         <th>Nombre aprendiz</th>
@@ -351,7 +349,6 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                                             <td><?= $t["apellido_instructor"]; ?></td>
                                             <td><?= $t["estado_instructor"]; ?></td>
                                             <td><?= $t["calificacion_trabajo"]; ?></td>
-                                            <td><?= $t["ruta_trabajo_instructor"]; ?></td>
                                             <td><?= $t["comentario_trabajo"]; ?></td>
                                             <td><?= $t["fecha_limite_trabajo"]; ?></td>
                                             <td><?= $t["nombre_aprendiz"]; ?></td>
@@ -370,7 +367,7 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                                                         <i class="bi bi-journal-check"></i>
                                                     </a>
                                                 <?php endif; ?>
-                                                <?php if ($t['fecha_limite_trabajo'] > $fechaActual['fecha']): ?>
+                                                <?php if ($t['fecha_limite_trabajo'] > $fechaActual['fecha'] && $_SESSION['tipoUsuario'] == 'Aprendiz'): ?>
                                                     <button class="btn btn-sm btn-warning"
                                                         data-id="<?= $t['id_trabajo']; ?>"
                                                         onclick="editarRutaTrabajo(this)">

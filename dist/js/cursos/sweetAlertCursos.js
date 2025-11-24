@@ -668,7 +668,7 @@ async function sweetCursoInsertar() {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreCurso').value.trim();
                 const descripcion = document.querySelector('#descripcionCurso').value.trim();
-                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ1234567890\s]+$/;
                 //? Verificar que los campos esten llenos
                 if (!nombre || !descripcion) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
@@ -747,7 +747,7 @@ async function sweetCursoEditar(id) {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreCurso').value.trim();
                 const descripcion = document.querySelector('#descripcionCurso').value.trim();
-                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ1234567890,-.#$%&"!?\s]+$/;
                 //? Verificar que los campos esten llenos
                 if (!nombre || !descripcion) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');

@@ -37,7 +37,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - Biblioteca ADSO</title>
+    <title>Cursos - Proyecto Scrum ADSO</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@10.2.0/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>

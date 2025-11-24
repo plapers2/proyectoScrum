@@ -560,9 +560,18 @@ async function sweetAdminInsertar() {
                 const email = document.querySelector('#emailUsuario').value.trim();
                 //* Validar formato de correo antes de continuar
                 const emailValue = email;
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
                 const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!regexCorreo.test(emailValue)) {
-                    Swal.showValidationMessage('Formato de correo no válido');
+                    Swal.showValidationMessage('Formato de correo no valido');
+                    return false;
+                }
+                if (!regex.test(nombre)) {
+                    Swal.showValidationMessage('Ingresa un nombre valido!');
+                    return false;
+                }
+                if (!regex.test(apellido)) {
+                    Swal.showValidationMessage('Ingresa un apellido valido!');
                     return false;
                 }
                 const pass = document.querySelector('#passUsuario').value.trim();
@@ -652,6 +661,15 @@ async function sweetAdminEditar(id) {
                 //* Validar formato de correo antes de continuar
                 const emailValue = email;
                 const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+                if (!regex.test(nombre)) {
+                    Swal.showValidationMessage('Ingresa un nombre valido!');
+                    return false;
+                }
+                if (!regex.test(apellido)) {
+                    Swal.showValidationMessage('Ingresa un apellido valido!');
+                    return false;
+                }
                 if (!regexCorreo.test(emailValue)) {
                     Swal.showValidationMessage('Formato de correo no válido');
                     return false;
