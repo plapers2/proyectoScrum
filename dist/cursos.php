@@ -100,17 +100,17 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                 Administradores
                             </a>
 
-                            <a class="nav-link collapsed" href="cursos.php">
+                            <a class="nav-link collapsed active" href="cursos.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
                                 Cursos
                             </a>
-
                             <a class="nav-link collapsed" href="aprendices.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
                             </a>
+
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
 
@@ -144,7 +144,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                         <li class="breadcrumb-item active">Panel de Administracion</li>
                     </ol>
                     <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
-                        <button class="btn btn-success mb-4 fs-4" id="cursoInsertar"><i class="bi bi-journal-plus"></i> Crear nuevo Curso</button>
+                        <button class="btn btn-success mb-4" id="cursoInsertar"><i class="bi bi-journal-plus"></i> Crear nuevo Curso</button>
                     <?php } ?>
                     <div class="card mb-4 border-black">
                         <div class="card-header">
@@ -178,14 +178,14 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                                             <td class="d-flex justify-content-center gap-1">
                                                 <?php if ($_SESSION['tipoUsuario'] == 'Administrador') { ?>
                                                     <?php if ($datoFila['estado_curso'] == 'Activo') { ?>
-                                                        <button class="btn btn-warning btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-pencil-square"></i> Editar</button>
-                                                        <button class="btn btn-danger btn-sm fs-6" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-trash"></i> Desactivar</button>
+                                                        <button class="btn btn-warning btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoEditar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-pencil-square"></i></button>
+                                                        <button class="btn btn-danger btn-sm fs-6" id="cursoDesactivar" onclick="sweetCursoDesactivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-trash"></i></button>
                                                     <?php } else { ?>
-                                                        <button class="btn btn-success btn-sm fs-6" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-check-circle"></i> Activar</button>
+                                                        <button class="btn btn-success btn-sm fs-6" id="cursoActivar" onclick="sweetCursoActivar(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-check-circle"></i></button>
                                                     <?php } ?>
-                                                    <button class="btn btn-primary btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>,'<?php echo $datoFila['estado_curso'] ?>')"><i class="bi bi-eye"></i> Instructores</button>
+                                                    <button class="btn btn-primary btn-sm fs-6" id="cursoVerInstructores" onclick="sweetCursoVerInstructores(<?php echo $datoFila['id_curso'] ?>,'<?php echo $datoFila['estado_curso'] ?>')"><i class="bi bi-person-video3"></i></button>
                                                 <?php } ?>
-                                                <button class="btn btn-primary btn-sm fs-6" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-eye"></i> Aprendices</button>
+                                                <button class="btn btn-primary btn-sm fs-6" id="cursoVerAprendices" onclick="sweetCursoVerAprendices(<?php echo $datoFila['id_curso'] ?>)"><i class="bi bi-person-square"></i></button>
                                             </td>
                                         </tr>
                                     <?php }

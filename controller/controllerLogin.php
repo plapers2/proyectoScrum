@@ -35,44 +35,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         };
         //* Verificaciones
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if (password_verify($pass, $usuario['pass' . $tipo])) {
-                //* Se guardan credenciales en variable global $_SESSION
-                $_SESSION['idUsuario'] = $usuario['id' . $tipo];
-                $_SESSION['emailUsuario'] = $usuario['correo' . $tipo];
-                $_SESSION['nombreUsuario'] = $usuario['nombre' . $tipo];
-                $_SESSION['apellidoUsuario'] = $usuario['apellido' . $tipo];
-                switch ($tipo) {
-                    case '_administrador':
-                        $tipo = 'Administrador';
-                        break;
-                    case '_instructor':
-                        $tipo = 'Instructor';
-                        break;
-                    case '_aprendiz':
-                        $tipo = 'Aprendiz';
-                        break;
-                    default:
-                        break;
-                }
-                $_SESSION['tipoUsuario'] = $tipo;
+            if ($usuario['estado' . $tipo] == 'Activo') {
+                if (password_verify($pass, $usuario['pass' . $tipo])) {
+                    //* Se guardan credenciales en variable global $_SESSION
+                    $_SESSION['idUsuario'] = $usuario['id' . $tipo];
+                    $_SESSION['emailUsuario'] = $usuario['correo' . $tipo];
+                    $_SESSION['nombreUsuario'] = $usuario['nombre' . $tipo];
+                    $_SESSION['apellidoUsuario'] = $usuario['apellido' . $tipo];
+                    switch ($tipo) {
+                        case '_administrador':
+                            $tipo = 'Administrador';
+                            break;
+                        case '_instructor':
+                            $tipo = 'Instructor';
+                            break;
+                        case '_aprendiz':
+                            $tipo = 'Aprendiz';
+                            break;
+                        default:
+                            break;
+                    }
+                    $_SESSION['tipoUsuario'] = $tipo;
 
-                //* Exito
-                switch ($tipo) {
-                    case 'Administrador':
-                        header("Location: ../dist/administradores.php");
-                        break;
-                    case 'Instructor':
-                        header("Location: ../dist/instructores.php");
-                        break;
-                    case 'Aprendiz':
-                        header("Location: ../dist/aprendices.php");
-                        break;
-                    default:
-                        break;
+                    //* Exito
+                    switch ($tipo) {
+                        case 'Administrador':
+                            header("Location: ../dist/administradores.php");
+                            break;
+                        case 'Instructor':
+                            header("Location: ../dist/instructores.php");
+                            break;
+                        case 'Aprendiz':
+                            header("Location: ../dist/aprendices.php");
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    $mysql->desconectar();
+                    header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
+                    exit();
                 }
             } else {
                 $mysql->desconectar();
-                header("Location: ../dist/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
+                header("Location: ../dist/login.php?error=true&message=Usuario inactivo, consulta con tu administrador!&title=Error!");
                 exit();
             }
         } else {

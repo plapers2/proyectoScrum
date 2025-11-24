@@ -117,14 +117,14 @@ while ($valor = mysqli_fetch_assoc($resultado)) {
                                 Aprendices
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
 
                         <?php endif; ?>
 
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador" || $_SESSION["tipoUsuario"] == "Instructor"): ?>
-                            <a class="nav-link collapsed" href="instructores.php">
+                            <a class="nav-link collapsed active" href="instructores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                                 Instructores
                             </a>

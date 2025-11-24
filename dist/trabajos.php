@@ -25,7 +25,7 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
     JOIN instructores ON instructores.id_instructor = trabajos.instructores_id_instructor
     JOIN cursos ON cursos.id_curso = aprendices.cursos_id_curso
     WHERE instructores.id_instructor = 
-    $idInstructor;
+    $idInstructor AND instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo';
     ");
 } else {
 
@@ -37,6 +37,7 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
         LEFT JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
         LEFT JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
         LEFT JOIN instructores AS i ON t.instructores_id_instructor = i.id_instructor
+        WHERE i.estado_instructor = 'Activo' AND a.estado_aprendiz = 'Activo';
     ");
 }
 
@@ -48,7 +49,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
 // Lista de aprendices
 $aprendices_result = $mysql->efectuarConsulta("
     SELECT id_aprendiz, nombre_aprendiz as nombre, apellido_aprendiz as apellido 
-    FROM aprendices
+    FROM aprendices WHERE aprendices.estado_aprendiz = 'Activo';
 ");
 
 $aprendices = [];
@@ -150,8 +151,8 @@ $mysql->desconectar();
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
                             </a>
-                            <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                            <a class="nav-link collapsed active" href="trabajos.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
 

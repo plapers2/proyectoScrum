@@ -103,7 +103,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
 
                         <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
 
-                            <a class="nav-link collapsed" href="administradores.php">
+                            <a class="nav-link collapsed active" href="administradores.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
                                 Administradores
                             </a>
@@ -118,7 +118,7 @@ while ($fila = mysqli_fetch_assoc($adminsDB)) {
                                 Aprendices
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
 

@@ -18,14 +18,14 @@ $resultado = null;
 if ($_SESSION["tipoUsuario"] == "Administrador") {
     $resultado = $mysql->efectuarConsulta("
         SELECT * FROM aprendices 
-        WHERE estado_aprendiz = 'Activo'
+        WHERE estado_aprendiz = 'Activo';
     ");
 }
 
 if ($_SESSION["tipoUsuario"] == "Aprendiz") {
     $resultado = $mysql->efectuarConsulta("
         SELECT * FROM aprendices 
-        WHERE id_aprendiz = $id
+        WHERE id_aprendiz = $id AND estado_aprendiz = 'Activo';
     ");
 }
 
@@ -46,6 +46,7 @@ if ($_SESSION["tipoUsuario"] == "Administrador") {
             ON trabajos.instructores_id_instructor = instructores.id_instructor
         INNER JOIN aprendices
             ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+            WHERE instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo'
     ");
 }
 
@@ -60,7 +61,7 @@ if ($_SESSION["tipoUsuario"] == "Aprendiz") {
             ON trabajos.instructores_id_instructor = instructores.id_instructor
         INNER JOIN aprendices
             ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
-        WHERE trabajos.aprendices_id_aprendiz = $id
+        WHERE trabajos.aprendices_id_aprendiz = $id AND instructores.estado_instructor = 'Activo' AND aprendices.estado_aprendiz = 'Activo'
     ");
 }
 
@@ -173,12 +174,12 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                                 Cursos
                             </a>
 
-                            <a class="nav-link collapsed" href="aprendices.php">
+                            <a class="nav-link collapsed active" href="aprendices.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
                                 Aprendices
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
                             </a>
 
@@ -299,7 +300,7 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                             <div class="modal-dialog">
                                 <div class="modal-content">
 
-                                    <form action="../controller/aprendices/subirTrabajo.php" method="POST" enctype="multipart/form-data">
+                                    <form action="../controller/aprendices/subirTrabajo.php?id_trabajo='<?php echo $id_trabajo ?>'" method="POST" enctype="multipart/form-data">
 
                                         <div class="modal-header">
                                             <h5 class="modal-title">Editar archivo del trabajo</h5>
