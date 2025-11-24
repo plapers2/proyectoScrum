@@ -86,6 +86,17 @@ $trabajos = [];
 while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
     $trabajos[] = $fila;
 }
+// Obtener cursos activos
+$resultadoCursos = $mysql->efectuarConsulta("
+    SELECT id_curso, nombre_curso 
+    FROM cursos 
+    WHERE estado_curso = 'Activo'
+");
+$cursos = [];
+while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
+    $cursos[] = $fila;
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -265,12 +276,13 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Curso</label>
-                                                            <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
-                                                                <option value="">Seleccione un curso</option>
-                                                            </select>
-                                                        </div>
+                                                        <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
+                                                            <option value="">Seleccione un curso</option>
+                                                            <?php foreach ($cursos as $curso): ?>
+                                                                <option value="<?= $curso['id_curso']; ?>"><?= $curso['nombre_curso']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+
 
                                                     </div>
 
@@ -515,6 +527,46 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
         });
     </script>
     <script src="./js/aprendices/eliminarAprendiz.js"></script>
+    <script>
+        document.getElementById("btnGuardarAprendiz").addEventListener("click", function() {
+            let form = document.getElementById("formInsertAprendiz");
+            let formData = new FormData(form);
+
+            fetch('../controller/aprendices/insertarAprendiz.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.text())
+                .then(res => {
+                    res = res.trim(); // eliminar espacios
+                    if (res === "ok") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: 'Aprendiz registrado correctamente',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload(); // recarga la página para actualizar la tabla
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error en la solicitud',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+    </script>
 
 </body>
 
