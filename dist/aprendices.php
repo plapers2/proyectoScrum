@@ -33,30 +33,70 @@ $aprendices = [];
 while ($fila = mysqli_fetch_assoc($resultado)) {
     $aprendices[] = $fila;
 }
-$resultadoTrabajos = $mysql->efectuarConsulta("
-    SELECT 
-        trabajos.id_trabajo,
-        instructores.nombre_instructor,
-        instructores.apellido_instructor,
-        instructores.estado_instructor,
-        trabajos.calificacion_trabajo,
-        trabajos.ruta_trabajo,
-        trabajos.comentario_trabajo,
-        trabajos.fecha_limite_trabajo,
-        aprendices.nombre_aprendiz
-    FROM instructores
-    LEFT JOIN trabajos 
-        ON trabajos.instructores_id_instructor = instructores.id_instructor
-    LEFT JOIN aprendices
-        ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
-    WHERE trabajos.aprendices_id_aprendiz = $id
-");
+$resultadoTrabajos = null;
+
+if ($_SESSION["tipoUsuario"] == "Administrador") {
+
+    // ADMINISTRADOR: ver todos los trabajos
+    $resultadoTrabajos = $mysql->efectuarConsulta("
+        SELECT 
+            trabajos.id_trabajo,
+            instructores.nombre_instructor,
+            instructores.apellido_instructor,
+            instructores.estado_instructor,
+            trabajos.calificacion_trabajo,
+            trabajos.ruta_trabajo,
+            trabajos.comentario_trabajo,
+            trabajos.fecha_limite_trabajo,
+            aprendices.nombre_aprendiz
+        FROM trabajos
+        INNER JOIN instructores 
+            ON trabajos.instructores_id_instructor = instructores.id_instructor
+        INNER JOIN aprendices
+            ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+    ");
+}
+
+if ($_SESSION["tipoUsuario"] == "Aprendiz") {
+
+    // APRENDIZ: ver solo los propios
+    $resultadoTrabajos = $mysql->efectuarConsulta("
+        SELECT 
+            trabajos.id_trabajo,
+            instructores.nombre_instructor,
+            instructores.apellido_instructor,
+            instructores.estado_instructor,
+            trabajos.calificacion_trabajo,
+            trabajos.ruta_trabajo,
+            trabajos.comentario_trabajo,
+            trabajos.fecha_limite_trabajo,
+            aprendices.nombre_aprendiz
+        FROM trabajos
+        INNER JOIN instructores 
+            ON trabajos.instructores_id_instructor = instructores.id_instructor
+        INNER JOIN aprendices
+            ON trabajos.aprendices_id_aprendiz = aprendices.id_aprendiz
+        WHERE trabajos.aprendices_id_aprendiz = $id
+    ");
+}
+
 
 
 $trabajos = [];
 while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
     $trabajos[] = $fila;
 }
+// Obtener cursos activos
+$resultadoCursos = $mysql->efectuarConsulta("
+    SELECT id_curso, nombre_curso 
+    FROM cursos 
+    WHERE estado_curso = 'Activo'
+");
+$cursos = [];
+while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
+    $cursos[] = $fila;
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -143,8 +183,8 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                 Aprendices
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
-                                trabajos
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                Trabajos
                             </a>
 
                         <?php endif; ?>
@@ -180,7 +220,7 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                             <li class="breadcrumb-item active">Listado de aprendices</li>
                         </ol>
                         <div class="text-end">
-                            <button class="btn btn-success mb-2" id="btn_registro_instructor">
+                            <button class="btn btn-success mb-2" id="btnAgregarAprendiz">
                                 <i class="bi bi-person-add"></i> Insertar aprendiz
                             </button>
 
@@ -236,12 +276,13 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Curso</label>
-                                                            <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
-                                                                <option value="">Seleccione un curso</option>
-                                                            </select>
-                                                        </div>
+                                                        <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
+                                                            <option value="">Seleccione un curso</option>
+                                                            <?php foreach ($cursos as $curso): ?>
+                                                                <option value="<?= $curso['id_curso']; ?>"><?= $curso['nombre_curso']; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+
 
                                                     </div>
 
@@ -393,13 +434,18 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
                                             <td><?= $t["fecha_limite_trabajo"]; ?></td>
                                             <td><?= $t["nombre_aprendiz"]; ?></td>
                                             <td>
-                                                <?php if ($t["calificacion_trabajo"] == ""): ?>
-                                                    <button class="btn btn-sm btn-warning"
-                                                        data-id="<?= $t['id_trabajo']; ?>"
-                                                        onclick="editarRutaTrabajo(this)">
-                                                        <i class="bi bi-journal-arrow-up"></i>
-                                                    </button>
-                                                <?php endif; ?>
+                                                <a
+                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo'] ?>"
+                                                    target="_blank"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-book"></i>
+                                                </a>
+
+                                                <button class="btn btn-sm btn-warning"
+                                                    data-id="<?= $t['id_trabajo']; ?>"
+                                                    onclick="editarRutaTrabajo(this)">
+                                                    <i class="bi bi-journal-arrow-up"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -474,14 +520,10 @@ while ($fila = mysqli_fetch_assoc($resultadoTrabajos)) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>
-    <script>
-        document.getElementById("btn_registro_instructor").addEventListener("click", () => {
-            let modal = new bootstrap.Modal(document.getElementById("modalInsertAprendiz"));
-            modal.show();
-        });
-    </script>
-    <script src="./js/aprendices/eliminarAprendiz.js"></script>
-
+    <?php if ($_SESSION["tipoUsuario"] == "Admin"): ?>
+        <script src="js/aprendices/eliminarAprendiz.js"></script>
+        <script src="js/aprendices/agregarAprendiz.js"></script>
+    <?php endif; ?>
 </body>
 
 </html>
