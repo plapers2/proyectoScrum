@@ -19,7 +19,9 @@ if (!isset($_SESSION['idUsuario'])) {
     exit;
 }
 
+//* variables
 $id_instructor = $_SESSION['idUsuario'];
+$id_trabajo = filter_var($_POST["id_trabajo"], FILTER_SANITIZE_NUMBER_INT);
 
 // Validar que se haya subido un archivo
 if (!isset($_FILES['ruta_trabajo']) || $_FILES['ruta_trabajo']['error'] !== UPLOAD_ERR_OK) {
@@ -105,9 +107,7 @@ try {
         }
         if ($_SESSION['tipoUsuario'] == 'Aprendiz') {
             $insertar_trabajo = $sql->efectuarConsulta(
-                "INSERT INTO trabajos (estado_trabajo, ruta_trabajo_aprendiz, fecha_subida, fecha_limite_trabajo, instructores_id_instructor, aprendices_id_aprendiz) 
-             VALUES ('Activo', '$nombre_unico', NOW(), '$fecha_limite', $id_instructor, $id_aprendiz)"
-            );
+                "UPDATE trabajos SET ruta_trabajo_aprendiz = '$nombre_unico' WHERE id_trabajo = $id_trabajo");
         } else if ($_SESSION['tipoUsuario'] == 'Instructor') {
             $insertar_trabajo = $sql->efectuarConsulta(
                 "INSERT INTO trabajos (estado_trabajo, ruta_trabajo_instructor, fecha_subida, fecha_limite_trabajo, instructores_id_instructor, aprendices_id_aprendiz) 

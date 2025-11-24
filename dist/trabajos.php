@@ -19,14 +19,13 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
 
     $idInstructor = $_SESSION["idUsuario"];
     $resultado = $mysql->efectuarConsulta("
-        SELECT 
-            *
-        FROM trabajos AS t
-        INNER JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
-        INNER JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
-        INNER JOIN cursos_has_instructores AS chi ON chi.cursos_id_curso = c.id_curso
-        INNER JOIN instructores AS i ON chi.instructores_id_instructor = i.id_instructor
-        WHERE chi.instructores_id_instructor = $idInstructor
+        SELECT *
+    FROM trabajos
+    JOIN aprendices ON aprendices.id_aprendiz = trabajos.aprendices_id_aprendiz
+    JOIN instructores ON instructores.id_instructor = trabajos.instructores_id_instructor
+    JOIN cursos ON cursos.id_curso = aprendices.cursos_id_curso
+    WHERE instructores.id_instructor = 
+    $idInstructor;
     ");
 } else {
 

@@ -401,11 +401,13 @@ $cursos_json = htmlspecialchars(
     <?php endif; ?>
     <script>
         function editarRutaTrabajo(boton) {
-            let id = boton.getAttribute("data-id");
-            document.getElementById("id_trabajo").value = id;
+            let id = boton.getAttribute('data-id');
+            document.getElementById('id_trabajo').value = id;
 
-            let modal = new bootstrap.Modal(document.getElementById("modalEditarRuta"));
+            let modal = new bootstrap.Modal(document.getElementById('modalEditarRuta'));
             modal.show();
+
+
         }
     </script>
     <script>
