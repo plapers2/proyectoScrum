@@ -45,7 +45,7 @@ if ($_SESSION["tipoUsuario"] == "Administrador") {
             instructores.apellido_instructor,
             instructores.estado_instructor,
             trabajos.calificacion_trabajo,
-            trabajos.ruta_trabajo,
+            trabajos.ruta_trabajo_instructor,
             trabajos.comentario_trabajo,
             trabajos.fecha_limite_trabajo,
             aprendices.nombre_aprendiz
@@ -67,7 +67,7 @@ if ($_SESSION["tipoUsuario"] == "Aprendiz") {
             instructores.apellido_instructor,
             instructores.estado_instructor,
             trabajos.calificacion_trabajo,
-            trabajos.ruta_trabajo,
+            trabajos.ruta_trabajo_instructor,
             trabajos.comentario_trabajo,
             trabajos.fecha_limite_trabajo,
             aprendices.nombre_aprendiz
@@ -96,6 +96,12 @@ $cursos = [];
 while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
     $cursos[] = $fila;
 }
+
+$cursos_json = htmlspecialchars(
+    json_encode($cursos, JSON_UNESCAPED_UNICODE),
+    ENT_QUOTES,
+    'UTF-8'
+);
 
 
 ?>
@@ -196,7 +202,10 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
                             </a>
                         <?php endif; ?>
 
-                        <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
+                        <?php if (
+                            $_SESSION["tipoUsuario"] == "Instructor"
+                            || $_SESSION["tipoUsuario"] == "Aprendiz"
+                        ): ?>
                             <a class="nav-link collapsed" href="trabajos.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                                 Trabajos
@@ -220,89 +229,10 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
                             <li class="breadcrumb-item active">Listado de aprendices</li>
                         </ol>
                         <div class="text-end">
-                            <button class="btn btn-success mb-2" id="btnAgregarAprendiz">
-                                <i class="bi bi-person-add"></i> Insertar aprendiz
+                            <button data-cursos="<?= $cursos_json ?>"
+                                class="btn btn-success mb-2" id="btnAgregarAprendiz">
+                                <i class="bi bi-person-add"></i> Agregar aprendiz
                             </button>
-
-                            <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
-                                <!-- Modal Insertar Aprendiz -->
-                                <div class="modal fade" id="modalInsertAprendiz" tabindex="-1" aria-labelledby="tituloInsertAprendiz" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="tituloInsertAprendiz">Registrar nuevo aprendiz</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <form id="formInsertAprendiz">
-
-                                                    <div class="row">
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Nombre</label>
-                                                            <input type="text" class="form-control" name="nombre_aprendiz" required>
-                                                        </div>
-
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Apellido</label>
-                                                            <input type="text" class="form-control" name="apellido_aprendiz" required>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Correo</label>
-                                                            <input type="email" class="form-control" name="correo_aprendiz" required>
-                                                        </div>
-
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Contraseña</label>
-                                                            <input type="password" class="form-control" name="pass_aprendiz" required>
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div class="row">
-
-                                                        <div class="col-md-6 mb-3">
-                                                            <label class="form-label">Estado</label>
-                                                            <select class="form-control" name="estado_aprendiz" required>
-                                                                <option value="">Seleccione...</option>
-                                                                <option value="Activo">Activo</option>
-                                                                <option value="Inactivo">Inactivo</option>
-                                                                <option value="Suspendido">Suspendido</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <select class="form-control" name="cursos_id_curso" id="selectCursos" required>
-                                                            <option value="">Seleccione un curso</option>
-                                                            <?php foreach ($cursos as $curso): ?>
-                                                                <option value="<?= $curso['id_curso']; ?>"><?= $curso['nombre_curso']; ?></option>
-                                                            <?php endforeach; ?>
-                                                        </select>
-
-
-                                                    </div>
-
-                                                </form>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Cancelar
-                                                </button>
-                                                <button type="button" class="btn btn-success" id="btnGuardarAprendiz">
-                                                    Guardar aprendiz
-                                                </button>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-
                         </div>
                     <?php endif; ?>
 
@@ -342,13 +272,15 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
                                                 <td><?= $a["estado_aprendiz"]; ?></td>
 
                                                 <td>
-                                                    <button class="btn btn-sm btn-info"
-                                                        data-id="<?= $a["id_aprendiz"]; ?>"
-                                                        data-nombre="<?= $a["nombre_aprendiz"]; ?>"
-                                                        data-apellido="<?= $a["apellido_aprendiz"]; ?>"
-                                                        data-correo="<?= $a["correo_aprendiz"]; ?>"
-                                                        onclick="editarPerfil(this)">
-                                                        <i class="bi bi-pencil-square"></i>
+                                                    <button
+                                                        class="btn btn-warning btn-sm"
+                                                        onclick="editarAprendiz(this)"
+                                                        data-id="<?= $a['id_aprendiz'] ?>"
+                                                        data-nombre="<?= $a['nombre_aprendiz'] ?>"
+                                                        data-apellido="<?= $a['apellido_aprendiz'] ?>"
+                                                        data-correo="<?= $a['correo_aprendiz'] ?>"
+                                                        data-cursoid="<?= $a['cursos_id_curso'] ?>">
+                                                        <i class="bi bi-pencil"></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-danger"
                                                         data-id="<?= $a["id_aprendiz"]; ?>"
@@ -429,13 +361,13 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
                                             <td><?= $t["apellido_instructor"]; ?></td>
                                             <td><?= $t["estado_instructor"]; ?></td>
                                             <td><?= $t["calificacion_trabajo"]; ?></td>
-                                            <td><?= $t["ruta_trabajo"]; ?></td>
+                                            <td><?= $t["ruta_trabajo_instructor"]; ?></td>
                                             <td><?= $t["comentario_trabajo"]; ?></td>
                                             <td><?= $t["fecha_limite_trabajo"]; ?></td>
                                             <td><?= $t["nombre_aprendiz"]; ?></td>
                                             <td>
                                                 <a
-                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo'] ?>"
+                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo_instructor'] ?>"
                                                     target="_blank"
                                                     class="btn btn-primary btn-sm">
                                                     <i class="bi bi-book"></i>
@@ -520,9 +452,10 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>
-    <?php if ($_SESSION["tipoUsuario"] == "Admin"): ?>
-        <script src="js/aprendices/eliminarAprendiz.js"></script>
+    <?php if ($_SESSION["tipoUsuario"] == "Administrador"): ?>
         <script src="js/aprendices/agregarAprendiz.js"></script>
+        <script src="js/aprendices/eliminarAprendiz.js"></script>
+        <script src="js/aprendices/editarAprendiz.js"></script>
     <?php endif; ?>
 </body>
 
