@@ -18,8 +18,6 @@ if ($_SESSION["tipoUsuario"] != "Administrador" && $_SESSION["tipoUsuario"] != "
 if ($_SESSION["tipoUsuario"] == "Instructor") {
 
     $idInstructor = $_SESSION["idUsuario"];
-
-    // 🚀 Consulta correcta: instructor ve TODOS los trabajos de TODOS sus cursos
     $resultado = $mysql->efectuarConsulta("
         SELECT 
             t.id_trabajo,
