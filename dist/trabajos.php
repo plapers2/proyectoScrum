@@ -163,8 +163,8 @@ $mysql->desconectar();
                                 Aprendices
                             </a>
                             <a class="nav-link collapsed" href="trabajos.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user-graduate"></i></div>
-                                trabajos
+                                <div class="sb-nav-link-icon"><i class="fas fa-briefcase me-2"></i></div>
+                                Trabajos
                             </a>
 
                         <?php endif; ?>
