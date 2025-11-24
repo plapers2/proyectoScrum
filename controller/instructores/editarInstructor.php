@@ -17,8 +17,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $correo = filter_var($_POST["correo_instructor"], FILTER_SANITIZE_EMAIL);
 
     $instructor_repetido = $sql->efectuarConsulta("SELECT id_instructor FROM instructores
-                                            WHERE nombre_instructor = '$nombre'
+                                            WHERE correo_instructor = '$correo'
                                             AND id_instructor != $id");
+    if ($instructor_repetido->num_rows > 0) {
+        echo "Ya existe un instructor con ese correo";
+        $sql->desconectar();
+        exit;
+    }
 
     $editar = $sql->efectuarConsulta("UPDATE instructores SET nombre_instructor = '$nombre',
                                         apellido_instructor = '$apellido', correo_instructor = '$correo',
