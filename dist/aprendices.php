@@ -220,7 +220,7 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
                             <li class="breadcrumb-item active">Listado de aprendices</li>
                         </ol>
                         <div class="text-end">
-                            <button class="btn btn-success mb-2" id="btn_registro_instructor">
+                            <button class="btn btn-success mb-2" id="btnAgregarAprendiz">
                                 <i class="bi bi-person-add"></i> Insertar aprendiz
                             </button>
 
@@ -520,54 +520,10 @@ while ($fila = mysqli_fetch_assoc($resultadoCursos)) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>
-    <script>
-        document.getElementById("btn_registro_instructor").addEventListener("click", () => {
-            let modal = new bootstrap.Modal(document.getElementById("modalInsertAprendiz"));
-            modal.show();
-        });
-    </script>
-    <script src="./js/aprendices/eliminarAprendiz.js"></script>
-    <script>
-        document.getElementById("btnGuardarAprendiz").addEventListener("click", function() {
-            let form = document.getElementById("formInsertAprendiz");
-            let formData = new FormData(form);
-
-            fetch('../controller/aprendices/insertarAprendiz.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.text())
-                .then(res => {
-                    res = res.trim(); // eliminar espacios
-                    if (res === "ok") {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'Aprendiz registrado correctamente',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload(); // recarga la página para actualizar la tabla
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: res,
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                })
-                .catch(err => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ocurrió un error en la solicitud',
-                        confirmButtonText: 'OK'
-                    });
-                });
-        });
-    </script>
-
+    <?php if ($_SESSION["tipoUsuario"] == "Admin"): ?>
+        <script src="js/aprendices/eliminarAprendiz.js"></script>
+        <script src="js/aprendices/agregarAprendiz.js"></script>
+    <?php endif; ?>
 </body>
 
 </html>
