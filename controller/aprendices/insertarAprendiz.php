@@ -49,7 +49,7 @@ if (
     $insertar = $sql->efectuarConsulta("INSERT INTO aprendices
         (nombre_aprendiz, apellido_aprendiz, estado_aprendiz, correo_aprendiz, pass_aprendiz, cursos_id_curso)
         VALUES
-        ('$nombre', '$apellido', '$estado', '$email', '$hash', $curso)
+        ('$nombre', '$apellido', 'Activo', '$email', '$hash', $curso)
     ");
 
     if ($insertar) {
