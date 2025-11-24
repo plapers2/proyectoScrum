@@ -23,9 +23,9 @@ if (
     $contrasena = password_hash($_POST["pass_instructor"], PASSWORD_DEFAULT);
 
     $instructor_repetido = $sql->efectuarConsulta("SELECT id_instructor FROM instructores
-                                                WHERE nombre_instructor = '$nombre'");
+                                                WHERE correo_instructor = '$correo'");
     if ($instructor_repetido->num_rows > 0) {
-        echo "El instructor $nombre ya existe en el aplicativo. Intenta con otro";
+        echo "Esté correo del instructor ya existe en la base de datos. Por favor ingresa con otro";
         $sql->desconectar();
         exit;
     }
