@@ -361,17 +361,21 @@ while ($valor = $fechaActualConsulta->fetch_assoc()) {
                                                     class="btn btn-primary btn-sm">
                                                     <i class="bi bi-book"></i>
                                                 </a>
-                                                <a
-                                                    href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
-                                                    target="_blank"
-                                                    class="btn btn-primary btn-sm">
-                                                    <i class="bi bi-journal-check"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-warning"
-                                                    data-id="<?= $t['id_trabajo']; ?>"
-                                                    onclick="editarRutaTrabajo(this)">
-                                                    <i class="bi bi-journal-arrow-up"></i>
-                                                </button>
+                                                <?php if ($t['ruta_trabajo_aprendiz']): ?>
+                                                    <a
+                                                        href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
+                                                        target="_blank"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-journal-check"></i>
+                                                    </a>
+                                                <?php endif; ?>
+                                                <?php if ($t['fecha_limite_trabajo'] > $fechaActual['fecha']): ?>
+                                                    <button class="btn btn-sm btn-warning"
+                                                        data-id="<?= $t['id_trabajo']; ?>"
+                                                        onclick="editarRutaTrabajo(this)">
+                                                        <i class="bi bi-journal-arrow-up"></i>
+                                                    </button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
