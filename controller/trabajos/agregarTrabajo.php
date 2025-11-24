@@ -103,11 +103,18 @@ try {
             $errores[] = "ID de aprendiz inválido: $id_aprendiz";
             continue;
         }
-
-        $insertar_trabajo = $sql->efectuarConsulta(
-            "INSERT INTO trabajos (estado_trabajo, ruta_trabajo, fecha_subida, fecha_limite_trabajo, instructores_id_instructor, aprendices_id_aprendiz) 
+        if ($_SESSION['tipoUsuario'] == 'Aprendiz') {
+            $insertar_trabajo = $sql->efectuarConsulta(
+                "INSERT INTO trabajos (estado_trabajo, ruta_trabajo_aprendiz, fecha_subida, fecha_limite_trabajo, instructores_id_instructor, aprendices_id_aprendiz) 
              VALUES ('Activo', '$nombre_unico', NOW(), '$fecha_limite', $id_instructor, $id_aprendiz)"
-        );
+            );
+        } else if ($_SESSION['tipoUsuario'] == 'Instructor') {
+            $insertar_trabajo = $sql->efectuarConsulta(
+                "INSERT INTO trabajos (estado_trabajo, ruta_trabajo_instructor, fecha_subida, fecha_limite_trabajo, instructores_id_instructor, aprendices_id_aprendiz) 
+             VALUES ('Activo', '$nombre_unico', NOW(), '$fecha_limite', $id_instructor, $id_aprendiz)"
+            );
+        }
+
 
         if (!$insertar_trabajo) {
             $errores[] = "Error al asignar trabajo al aprendiz ID: $id_aprendiz";
@@ -138,4 +145,3 @@ try {
 
     echo 'Error: ' . $e->getMessage();
 }
-

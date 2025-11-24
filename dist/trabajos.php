@@ -20,15 +20,7 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
     $idInstructor = $_SESSION["idUsuario"];
     $resultado = $mysql->efectuarConsulta("
         SELECT 
-            t.id_trabajo,
-            t.calificacion_trabajo,
-            t.comentario_trabajo,
-            t.fecha_subida,
-            t.fecha_limite_trabajo,
-            t.ruta_trabajo,
-            a.nombre_aprendiz,
-            c.nombre_curso,
-            i.nombre_instructor
+            *
         FROM trabajos AS t
         INNER JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
         INNER JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
@@ -41,15 +33,7 @@ if ($_SESSION["tipoUsuario"] == "Instructor") {
     // Administrador ve TODO sin filtro
     $resultado = $mysql->efectuarConsulta("
         SELECT 
-            t.id_trabajo,
-            t.calificacion_trabajo,
-            t.comentario_trabajo,
-            t.fecha_subida,
-            t.fecha_limite_trabajo,
-            t.ruta_trabajo,
-            a.nombre_aprendiz,
-            c.nombre_curso,
-            i.nombre_instructor
+            *
         FROM trabajos AS t
         LEFT JOIN aprendices AS a ON t.aprendices_id_aprendiz = a.id_aprendiz
         LEFT JOIN cursos AS c ON a.cursos_id_curso = c.id_curso
@@ -78,6 +62,11 @@ $aprendices_json = htmlspecialchars(
     ENT_QUOTES,
     'UTF-8'
 );
+$fechaActualConsulta = $mysql->efectuarConsulta("SELECT now()");
+$fechaActual = '';
+while ($valor = $fechaActualConsulta->fetch_assoc()) {
+    $fechaActual = $valor;
+}
 
 $mysql->desconectar();
 ?>
@@ -237,19 +226,27 @@ $mysql->desconectar();
                                         <td><?= $t["fecha_limite_trabajo"] ?></td>
                                         <td>
                                             <a
-                                                href="../uploads/trabajos/<?= $t['ruta_trabajo'] ?>"
+                                                href="../uploads/trabajos/<?= $t['ruta_trabajo_instructor'] ?>"
+                                                target="_blank"
+                                                class="btn btn-primary btn-sm">
+                                                <i class="bi bi-book"></i>
+                                            </a>
+                                            <a
+                                                href="../uploads/trabajos/<?= $t['ruta_trabajo_aprendiz'] ?>"
                                                 target="_blank"
                                                 class="btn btn-primary btn-sm">
                                                 <i class="bi bi-book"></i>
                                             </a>
 
                                             <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-                                                <a data-id-trabajo="<?= $t["id_trabajo"]; ?>"
-                                                    class="btn btn-success btn-sm"
-                                                    onclick="agregarCalificacion(this)">
-                                                    <i class="bi bi-journal-check"></i>
-                                                </a>
-                                            <?php endif; ?>
+                                                <?php if ($t['fecha_limite_trabajo'] > $fechaActual || $t['ruta_trabajo_aprendiz']): ?>
+                                                    <a data-id-trabajo="<?= $t["id_trabajo"]; ?>"
+                                                        class="btn btn-success btn-sm"
+                                                        onclick="agregarCalificacion(this)">
+                                                        <i class="bi bi-journal-check"></i>
+                                                    </a>
+                                            <?php endif;
+                                            endif; ?>
                                         </td>
 
                                     </tr>
@@ -275,8 +272,9 @@ $mysql->desconectar();
 
     <!--JS trabajos-->
     <?php if ($_SESSION["tipoUsuario"] == "Instructor"): ?>
-        <script src="./js/trabajos/agregarTrabajo.js"></script>
-        <script src="./js/trabajos/eliminarTrabajo.js"></script>
+        <script src="js/trabajos/agregarTrabajo.js"></script>
+        <script src="js/trabajos/eliminarTrabajo.js"></script>
+        <script src="js/trabajos/agregarCalificacion.js"></script>
     <?php endif; ?>
     <script src="js/cerrar_sesion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
